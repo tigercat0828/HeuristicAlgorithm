@@ -25,8 +25,8 @@ for (int i = 0; i < 100000; i++) {
 int finish = 0;
 Parallel.For(0, schedules.Count, i => {
     schedules[i].Run();
-    Interlocked.Increment(ref finish);
-    UpdateProgressBar(finish, schedules.Count); 
+    //Interlocked.Increment(ref finish);
+    //UpdateProgressBar(finish, schedules.Count); 
 });
 //for (int i = 0; i < schedules.Count; i++) {
 //    finish++;
@@ -52,7 +52,7 @@ Console.WriteLine($" time cost :{timecost}");
 // 更新进度条的方法
 void UpdateProgressBar(int current, int total) {
     float progress = (float)current / total * 100;
-    //Console.CursorLeft = 0;
+    Console.CursorLeft = 0;
     Console.WriteLine($"Progress: {progress:F2}%   ");
 }
 

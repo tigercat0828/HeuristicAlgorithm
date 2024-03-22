@@ -1,5 +1,5 @@
 ﻿namespace Heuristic;
 
-public enum VariantMethod {
+public enum AcceptanceMethod {
     II, SA, TS, RND
 }

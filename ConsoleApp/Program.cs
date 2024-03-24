@@ -1,8 +1,9 @@
 ﻿using Heuristic;
-using System.ComponentModel;
-using System.Diagnostics;
+using Spectre.Console;
+// Create a progress task
 
-ScheduleSolver solver = new("./Dataset/tai20_20_1.txt",AcceptanceMethod.II,1000);
+ScheduleSolver solver = new("./Dataset/tai20_20_1.txt", AcceptanceMethod.II, 100);
+solver.ExperienceName = "tai20_20_1_II";
 solver.Run();
 
 /*
@@ -29,7 +30,5 @@ More experiments
 2. large iterative time (may 1,000,000) & recorad local optima
 3. different problem set size
 4. intensification or diversification which is matter?
-
 Correctness/Clarity/Carefulness/Completeness
-
  */

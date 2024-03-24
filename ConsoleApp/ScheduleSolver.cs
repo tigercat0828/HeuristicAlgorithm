@@ -16,11 +16,20 @@ public class ScheduleSolver {
    
     public AcceptanceMethod Method { get; private set; } = AcceptanceMethod.II;
     private List<AcceptanceAlgo> instances;
+    public AcceptanceAlgo Answer { get; private set; }
+
+    double Timecost;
+
+    public int averageSpan = 0;
+    public int bestspan = 0;
+    public int worstspan =0;
+
     public ScheduleSolver(string filename, AcceptanceMethod method, int instanceNum) {
         Dataname = Path.GetFileNameWithoutExtension(filename);
+        Method = method;
+        ExperienceName = $"{Dataname}_{method}";
         InstanceNum = instanceNum;
         Data = LoadFile(filename);
-        Method = method;
         BuildInstances();
     }
     private void BuildInstances() {
@@ -35,7 +44,6 @@ public class ScheduleSolver {
     }
     public void Run() {
 
-
         Stopwatch sw = new();
         sw.Start();
 
@@ -45,27 +53,43 @@ public class ScheduleSolver {
         });
         //for (int i = 0; i < schedules.Count; i++) schedules[i].Run();
 
-        best = instances.First();
+        AcceptanceAlgo best = instances.First();
+        AcceptanceAlgo worst = instances.First();
         foreach (var problem in instances) {
             if (problem.Result.makespan < best.Result.makespan) {
                 best = problem;
             }
+            if(problem.Result.makespan > best.Result.makespan) {
+                worst = problem;
+            }
+            averageSpan += problem.Result.makespan;
+            Console.Write(problem.Result.makespan + ", ");
         }
+        Console.WriteLine();
+        averageSpan /= instances.Count;
+        bestspan = best.Result.makespan;
+        worstspan = worst.Result.makespan;
+
+        Answer = best;
         sw.Stop();
-        double timecost = sw.Elapsed.TotalSeconds;
+        Timecost = sw.Elapsed.TotalSeconds;
         sw.Reset();
+        
+        
         Plot(ExperienceName , Data, best.Result.order);       // make figure
-        PrintAndWriteResult(Console.Out);
+        WriteLineResult(Console.Out);
     }
-    AcceptanceAlgo best;
-    double timecost;
-    private void PrintAndWriteResult(TextWriter target) {
-        target.WriteLine($"Init Order : [{string.Join(',', best.InitialOrder)}]");
-        target.WriteLine($"Best Order : [{string.Join(',', best.Result.order)}]");
-        target.WriteLine($"  Makespan : {best.Result.makespan} seconds");
-        target.WriteLine($"    Method : {Method}");
-        target.WriteLine($" Time cost : {timecost:F2} seconds");
-        target.WriteLine($"InstanceNum: {InstanceNum}");
+    private void WriteReportFile(TextWriter target) {
+        target.WriteLine($"{bestspan}/{averageSpan}/{worstspan},");
+    }
+    private void WriteLineResult(TextWriter target) {
+        target.WriteLine($"        Method : {Method}");
+        target.WriteLine($"   InstanceNum : {InstanceNum}");
+        target.WriteLine($"    Init Order : [{string.Join(',', Answer.InitialOrder)}]");
+        target.WriteLine($"    Best Order : [{string.Join(',', Answer.Result.order)}]");
+        target.WriteLine($"best/avg/worst : {bestspan}/{averageSpan}/{worstspan}");
+        target.WriteLine($"     Time cost : {Timecost:F2} seconds");
+        target.WriteLine(new string('=', 80));
     }
     public static int[][] LoadFile(string filename) {
         string[] lines = File.ReadAllLines(filename);

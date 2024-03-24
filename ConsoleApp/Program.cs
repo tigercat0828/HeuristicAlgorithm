@@ -2,7 +2,7 @@
 using Spectre.Console;
 // Create a progress task
 
-ScheduleSolver solver = new("./Dataset/tai20_20_1.txt", AcceptanceMethod.II, 100);
+ScheduleSolver solver = new("./Dataset/tai20_20_1.txt", AcceptanceMethod.II, 30000);
 solver.ExperienceName = "tai20_20_1_II";
 solver.Run();
 

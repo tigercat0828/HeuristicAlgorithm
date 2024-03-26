@@ -1,5 +1,5 @@
 ﻿namespace Heuristic;
 
 public enum AcceptanceMethod {
-    II, SA, TS, RND
+    II=1, SA, TS, RND
 }

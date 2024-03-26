@@ -8,13 +8,13 @@ namespace Heuristic;
 
 public class ScheduleSolver {
     public string ExperienceName { get; set; }
+    public AcceptanceMethod Method { get; private set; } = AcceptanceMethod.II;
     public string Dataname { get; private set; }
     public int[][] Data { get; private set; }
     public int JobNum { get; private set; }
     public int MachineNum { get; private set; }
     public int InstanceNum { get; private set; }
    
-    public AcceptanceMethod Method { get; private set; } = AcceptanceMethod.II;
     private List<AcceptanceAlgo> instances;
     public AcceptanceAlgo Answer { get; private set; }
 
@@ -48,6 +48,7 @@ public class ScheduleSolver {
         sw.Start();
 
         // multi-thread
+        // TODO fixed threads num
         Parallel.For(0, instances.Count, i => { 
             instances[i].Run(); 
         });
@@ -79,8 +80,8 @@ public class ScheduleSolver {
         Plot(ExperienceName , Data, best.Result.order);       // make figure
         WriteLineResult(Console.Out);
     }
-    private void WriteReportFile(TextWriter target) {
-        target.WriteLine($"{bestspan}/{averageSpan}/{worstspan},");
+    public string ResultStr() {
+        return $"{bestspan}/{averageSpan}/{worstspan},";
     }
     private void WriteLineResult(TextWriter target) {
         target.WriteLine($"        Method : {Method}");
@@ -145,7 +146,7 @@ public class ScheduleSolver {
 
         return machineTime[machines - 1];
     }
-    public void PrintData() {
+    public void CheckData() {
         Console.WriteLine($"jobs: {JobNum} machines: {MachineNum}\n\n");
         Console.WriteLine(" Job  Stage");
         for (int i = 0; i < JobNum; i++) {

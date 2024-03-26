@@ -1,5 +1,5 @@
 ﻿namespace Heuristic;
-public class IterativeImprove : AcceptanceAlgo {
+public class IterativeImprove : HeuriAlgo {
     public IterativeImprove(int[][] data, int[] initOrder = null!) : base(data, initOrder) {
     }
     public override JobOrder Run() {

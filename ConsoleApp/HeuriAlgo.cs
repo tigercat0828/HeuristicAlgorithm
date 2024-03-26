@@ -2,7 +2,7 @@
 namespace Heuristic;
 
 
-public abstract class AcceptanceAlgo {
+public abstract class HeuriAlgo {
     public int[][] Data { get; private set; }
     public int[] InitialOrder { get; private set; }
     public int JobNum { get; private set; }
@@ -13,7 +13,7 @@ public abstract class AcceptanceAlgo {
     protected List<int[]> neighbors = new(1000);
     protected JobOrder current;
     public int IterTime { get; protected set; }
-    public AcceptanceAlgo(int[][] data, int[] initOrder = null!) {
+    public HeuriAlgo(int[][] data, int[] initOrder = null!) {
         Data = data;
         JobNum = data.Length;
         MachineNum = data[0].Length;

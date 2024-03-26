@@ -15,8 +15,8 @@ public class ScheduleSolver {
     public int MachineNum { get; private set; }
     public int InstanceNum { get; private set; }
    
-    private List<AcceptanceAlgo> instances;
-    public AcceptanceAlgo Answer { get; private set; }
+    private List<HeuriAlgo> instances;
+    public HeuriAlgo Answer { get; private set; }
 
     double Timecost;
 
@@ -33,14 +33,24 @@ public class ScheduleSolver {
         BuildInstances();
     }
     private void BuildInstances() {
-        instances = new(InstanceNum);
-        IterativeImprove origin = new(Data, Enumerable.Range(0, Data.Length).ToArray());
-        instances.Add(origin);
+        instances = new List<HeuriAlgo>(InstanceNum);
 
-        for (int i = 0; i < InstanceNum; i++) {
-            IterativeImprove sche = new(Data);
-            instances.Add(sche);
+        if(Method == AcceptanceMethod.II) {
+            IterativeImprove origin = new(Data, Enumerable.Range(0, Data.Length).ToArray());
+            instances.Add(origin);
+
+            for (int i = 0; i < InstanceNum; i++) {
+                IterativeImprove sche = new(Data);
+                instances.Add(sche);
+            }
         }
+        else if(Method == AcceptanceMethod.SA) {
+            // TODO : SA
+        }
+        else if(Method == AcceptanceMethod.TS) {
+            // TODO : TS
+        }
+        
     }
     public void Run() {
 
@@ -54,8 +64,8 @@ public class ScheduleSolver {
         });
         //for (int i = 0; i < schedules.Count; i++) schedules[i].Run();
 
-        AcceptanceAlgo best = instances.First();
-        AcceptanceAlgo worst = instances.First();
+        HeuriAlgo best = instances.First();
+        HeuriAlgo worst = instances.First();
         foreach (var problem in instances) {
             if (problem.Result.makespan < best.Result.makespan) {
                 best = problem;
@@ -64,9 +74,11 @@ public class ScheduleSolver {
                 worst = problem;
             }
             averageSpan += problem.Result.makespan;
-            Console.Write(problem.Result.makespan + ", ");
+            //Console.Write(problem.Result.makespan + ", ");
+
+            // TODO : add to span to plot 
         }
-        Console.WriteLine();
+        //Console.WriteLine();
         averageSpan /= instances.Count;
         bestspan = best.Result.makespan;
         worstspan = worst.Result.makespan;
@@ -81,7 +93,7 @@ public class ScheduleSolver {
         WriteLineResult(Console.Out);
     }
     public string ResultStr() {
-        return $"{bestspan}/{averageSpan}/{worstspan},";
+        return $"{bestspan}/{averageSpan}/{worstspan}";
     }
     private void WriteLineResult(TextWriter target) {
         target.WriteLine($"        Method : {Method}");
@@ -90,7 +102,6 @@ public class ScheduleSolver {
         target.WriteLine($"    Best Order : [{string.Join(',', Answer.Result.order)}]");
         target.WriteLine($"best/avg/worst : {bestspan}/{averageSpan}/{worstspan}");
         target.WriteLine($"     Time cost : {Timecost:F2} seconds");
-        target.WriteLine(new string('=', 80));
     }
     public static int[][] LoadFile(string filename) {
         string[] lines = File.ReadAllLines(filename);

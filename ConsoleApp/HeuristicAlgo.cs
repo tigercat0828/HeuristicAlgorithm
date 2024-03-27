@@ -7,12 +7,12 @@ public abstract class HeuristicAlgo {
     public int[] InitialOrder { get; private set; }
     public int JobNum { get; private set; }
     public int MachineNum { get; private set; }
-    public List<int> Spans { get; private set; } = [];
+    public List<int> SpanList { get; private set; } = [];
     public JobOrder Result => current;
-    protected static readonly Random random = new();
     protected List<int[]> neighbors = new(1000);
     protected JobOrder current;
     public int IterTime { get; protected set; }
+    protected static readonly Random random = new();
     public HeuristicAlgo(int[][] data, int[] initOrder = null!) {
         Data = data;
         JobNum = data.Length;
@@ -42,7 +42,7 @@ public abstract class HeuristicAlgo {
     protected void GetNeighbors(int[] order) {
         neighbors.Clear();
         for (int i = 0; i < order.Length; i++) {
-            for (int j = 0; j < order.Length; j++) {
+            for (int j = i; j < order.Length; j++) {
                 if (i == j) continue;
                 int[] temp = [.. order];
                 (temp[i], temp[j]) = (temp[j], temp[i]);
@@ -50,17 +50,7 @@ public abstract class HeuristicAlgo {
             }
         }
     }
-    protected int Select(List<int[]> neighbors) {
-        // Apply best-improve
-        foreach (int[] nei in neighbors) {
-            int score = Evaluate(nei);
-            if (score < current.makespan) {
-                current.makespan = score;
-                current.order = nei;
-            }
-        }
-        return current.makespan;
-    }
+   
     public int Evaluate(int[] jobOrder) {
         int[] machineTime = new int[MachineNum];
         foreach (int job in jobOrder) {
@@ -74,4 +64,5 @@ public abstract class HeuristicAlgo {
         return machineTime[MachineNum - 1];
     }
     public abstract JobOrder Run();
+    protected abstract int Select(List<int[]> neighbors);
 }

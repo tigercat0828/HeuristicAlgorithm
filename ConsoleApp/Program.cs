@@ -1,25 +1,9 @@
 ﻿using CsvHelper;
 using Heuristic;
 using System.Diagnostics;
-string line = new ('=', 100);
+string line = new('=', 100);
 
-for (int i = 0; i < 10; i++) {
-    for (int j = 0; j < 10; j++) {
-        if (i == j) continue;
-        Console.Write($"{i} {j},");  
-    }
-    Console.WriteLine();
-}
-Console.WriteLine("=====");
-for (int i = 0; i < 10; i++) {
-    for (int j = i; j < 10; j++) {
-        if(i==j) continue;
-        Console.Write($"{i} {j},");
-    }
-    Console.WriteLine();
-}
-Console.ReadLine();
-Stopwatch sw = new ();
+Stopwatch sw = new();
 sw.Start();
 
 string[] datasets = [
@@ -40,7 +24,7 @@ ExpResult[0] = ["-", "II", "SA", "TS"];
 List<ScheduleSolver> solvers = [];
 for (int i = 0; i < datasets.Length; i++) {
     solvers.Add(new ScheduleSolver($"./Dataset/{datasets[i]}", AcceptanceMethod.II, 20));
-    ExpResult[i+1][0] = datasets[i];
+    ExpResult[i + 1][0] = datasets[i];
     //solvers.Add(new($"./Dataset/{dataset}", AcceptanceMethod.II, 10000));
     //solvers.Add(new($"./Dataset/{dataset}", AcceptanceMethod.II, 10000));
 }
@@ -48,7 +32,7 @@ for (int i = 0; i < datasets.Length; i++) {
 for (int i = 0; i < solvers.Count; i++) {
     ScheduleSolver solver = solvers[i];
     solver.Run();
-    ExpResult[i+1][(int)solver.Method] = solver.ResultStr();
+    ExpResult[i + 1][(int)solver.Method] = solver.ResultStr();
     Console.WriteLine($"{solver.ExperienceName} Done");
     Console.WriteLine(line);
 }

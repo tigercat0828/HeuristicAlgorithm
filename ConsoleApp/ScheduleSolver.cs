@@ -1,8 +1,7 @@
 ﻿using ScottPlot;
 using ScottPlot.TickGenerators;
-using Spectre.Console;
 using System.Diagnostics;
-using System.Threading;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Heuristic;
 
@@ -14,7 +13,7 @@ public class ScheduleSolver {
     public int JobNum { get; private set; }
     public int MachineNum { get; private set; }
     public int InstanceNum { get; private set; }
-   
+
     private List<HeuristicAlgo> instances;
     public HeuristicAlgo Answer { get; private set; }
 
@@ -22,7 +21,7 @@ public class ScheduleSolver {
 
     public int averageSpan = 0;
     public int bestspan = 0;
-    public int worstspan =0;
+    public int worstspan = 0;
 
     public ScheduleSolver(string filename, AcceptanceMethod method, int instanceNum) {
         Dataname = Path.GetFileNameWithoutExtension(filename);
@@ -32,35 +31,37 @@ public class ScheduleSolver {
         Data = LoadFile(filename);
         BuildInstances();
     }
+    private HeuristicAlgo CreateInstance(AcceptanceMethod method, int[][] data, params int[] parameters) {
+        switch (method) {
+            case AcceptanceMethod.II:
+                return new IterativeImprove(data, parameters);
+            case AcceptanceMethod.SA:
+                return new TabuSearch(data, parameters);
+            case AcceptanceMethod.TS:
+                return new SimulateAnnealing(data, parameters);
+            default:
+                throw new ArgumentException("Invalid AcceptanceMethod");
+        }
+    }
+
+
     private void BuildInstances() {
         instances = new List<HeuristicAlgo>(InstanceNum);
-
-        if(Method == AcceptanceMethod.II) {
-            IterativeImprove origin = new(Data, Enumerable.Range(0, Data.Length).ToArray());
-            instances.Add(origin);
-
-            for (int i = 0; i < InstanceNum; i++) {
-                IterativeImprove sche = new(Data);
-                instances.Add(sche);
-            }
+        HeuristicAlgo origin = CreateInstance(Method, Data, Enumerable.Range(0, Data.Length).ToArray());
+        instances.Add(origin);
+        for (int i = 0; i < InstanceNum; i++) {
+            HeuristicAlgo instance = CreateInstance(Method, Data);
+            instances.Add(instance);
         }
-        else if(Method == AcceptanceMethod.SA) {
-            // TODO : SA
-        }
-        else if(Method == AcceptanceMethod.TS) {
-            // TODO : TS
-        }
-        
+        instances = new List<HeuristicAlgo>(InstanceNum);
     }
     public void Run() {
 
         Stopwatch sw = new();
         sw.Start();
 
-        // multi-thread
-        // TODO fixed threads num
-        Parallel.For(0, instances.Count, i => { 
-            instances[i].Run(); 
+        Parallel.For(0, instances.Count, i => {
+            instances[i].Run();
         });
         //for (int i = 0; i < schedules.Count; i++) schedules[i].Run();
 
@@ -70,7 +71,7 @@ public class ScheduleSolver {
             if (problem.Result.makespan < best.Result.makespan) {
                 best = problem;
             }
-            if(problem.Result.makespan > worst.Result.makespan) {
+            if (problem.Result.makespan > worst.Result.makespan) {
                 worst = problem;
             }
             averageSpan += problem.Result.makespan;
@@ -87,9 +88,9 @@ public class ScheduleSolver {
         sw.Stop();
         Timecost = sw.Elapsed.TotalSeconds;
         sw.Reset();
-        
-        
-        PlotGantt(ExperienceName , Data, best.Result.order);       // make figure
+
+
+        PlotGantt(ExperienceName, Data, best.Result.order);       // make figure
         WriteLineResult(Console.Out);
     }
     public string ResultStr() {

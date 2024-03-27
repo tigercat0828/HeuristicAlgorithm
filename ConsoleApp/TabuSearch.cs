@@ -33,11 +33,51 @@ public class TabuSearch : HeuristicAlgo {
         // Apply best-improve
         foreach (int[] nei in neighbors) {
             int score = Evaluate(nei);
-            if (score < current.makespan) {
-                current.makespan = score;
-                current.order = nei;
+            if (!TabuList.Contains(score)) {
+                if (score < current.makespan) {
+                    current.makespan = score;
+                    current.order = nei;
+                }
             }
+            
+            
         }
         return current.makespan;
     }
 }
+
+
+/*
+  foreach (List<int> neighbor in neighbors)
+        {
+            if (!tabu_list.Contains(neighbor))
+            {
+                int neighbor_fitness = ObjectiveFunction(neighbor);
+                if (neighbor_fitness < best_neighbor_fitness)
+                {
+                    best_neighbor = neighbor;
+                    best_neighbor_fitness = neighbor_fitness;
+                }
+            }
+        }
+        if (best_neighbor.Count == 0)
+        {
+              // No non-tabu neighbors found,
+            // terminate the search
+            break;
+        }
+        current_solution = best_neighbor;
+        tabu_list.Add(best_neighbor);
+        if (tabu_list.Count > tabu_list_size)
+        {
+              // Remove the oldest entry from the
+            // tabu list if it exceeds the size
+            tabu_list.RemoveAt(0);
+        }
+        if (ObjectiveFunction(best_neighbor) < ObjectiveFunction(best_solution))
+        {
+              // Update the best solution if the
+            // current neighbor is better
+            best_solution = best_neighbor;
+        }
+ */

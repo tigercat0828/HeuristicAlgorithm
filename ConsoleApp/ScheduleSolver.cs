@@ -15,8 +15,8 @@ public class ScheduleSolver {
     public int MachineNum { get; private set; }
     public int InstanceNum { get; private set; }
    
-    private List<HeuriAlgo> instances;
-    public HeuriAlgo Answer { get; private set; }
+    private List<HeuristicAlgo> instances;
+    public HeuristicAlgo Answer { get; private set; }
 
     double Timecost;
 
@@ -33,7 +33,7 @@ public class ScheduleSolver {
         BuildInstances();
     }
     private void BuildInstances() {
-        instances = new List<HeuriAlgo>(InstanceNum);
+        instances = new List<HeuristicAlgo>(InstanceNum);
 
         if(Method == AcceptanceMethod.II) {
             IterativeImprove origin = new(Data, Enumerable.Range(0, Data.Length).ToArray());
@@ -64,13 +64,13 @@ public class ScheduleSolver {
         });
         //for (int i = 0; i < schedules.Count; i++) schedules[i].Run();
 
-        HeuriAlgo best = instances.First();
-        HeuriAlgo worst = instances.First();
+        HeuristicAlgo best = instances.First();
+        HeuristicAlgo worst = instances.First();
         foreach (var problem in instances) {
             if (problem.Result.makespan < best.Result.makespan) {
                 best = problem;
             }
-            if(problem.Result.makespan > best.Result.makespan) {
+            if(problem.Result.makespan > worst.Result.makespan) {
                 worst = problem;
             }
             averageSpan += problem.Result.makespan;
@@ -89,7 +89,7 @@ public class ScheduleSolver {
         sw.Reset();
         
         
-        Plot(ExperienceName , Data, best.Result.order);       // make figure
+        PlotGantt(ExperienceName , Data, best.Result.order);       // make figure
         WriteLineResult(Console.Out);
     }
     public string ResultStr() {
@@ -120,7 +120,17 @@ public class ScheduleSolver {
     }
     private static readonly string[] ColorHex = ["#eb4034", "#eba834", "#bdeb34", "#46eb34", "#34eb9b", "#34c9eb", "#3471eb", "#5e34eb", "#bd34eb"];
     private static readonly int ColorNum = ColorHex.Length;
-    public static int Plot(string filename, int[][] data, int[] jobOrder) {
+
+    public static void PlotLineChart() {
+        Plot myPlot = new();
+
+        double[] dataX = { 1, 2, 3, 4, 5 };
+        double[] dataY = { 1, 4, 9, 16, 25 };
+        myPlot.Add.Scatter(dataX, dataY);
+
+        myPlot.SavePng("demo.png", 400, 300);
+    }
+    public static int PlotGantt(string filename, int[][] data, int[] jobOrder) {
         int jobs = data.Length;
         int machines = data[0].Length;
         List<Bar> bars = new(jobs * machines);
@@ -153,7 +163,7 @@ public class ScheduleSolver {
         if (!Directory.Exists("./Output")) {
             Directory.CreateDirectory("./Output");
         }
-        myPlot.SavePng($"./Output/{filename}.png", 2100, 900);
+        myPlot.SavePng($"./Output/{filename}_Gantt.png", 2100, 900);
 
         return machineTime[machines - 1];
     }

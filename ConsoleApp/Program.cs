@@ -3,7 +3,22 @@ using Heuristic;
 using System.Diagnostics;
 string line = new ('=', 100);
 
-
+for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; j++) {
+        if (i == j) continue;
+        Console.Write($"{i} {j},");  
+    }
+    Console.WriteLine();
+}
+Console.WriteLine("=====");
+for (int i = 0; i < 10; i++) {
+    for (int j = i; j < 10; j++) {
+        if(i==j) continue;
+        Console.Write($"{i} {j},");
+    }
+    Console.WriteLine();
+}
+Console.ReadLine();
 Stopwatch sw = new ();
 sw.Start();
 
@@ -15,25 +30,25 @@ string[] datasets = [
  "tai50_10_1.txt",
  "tai50_20_1.txt",
  "tai100_5_1.txt",
- "tai100_20_1.txt",
  "tai100_10_1.txt",
+ "tai100_20_1.txt",
 ];
 string[][] ExpResult = new string[datasets.Length + 1][];
 for (int i = 0; i < ExpResult.Length; i++) ExpResult[i] = new string[4];
-ExpResult[0] = ["", "II", "SA", "TS"];
+ExpResult[0] = ["-", "II", "SA", "TS"];
 
 List<ScheduleSolver> solvers = [];
 for (int i = 0; i < datasets.Length; i++) {
-    solvers.Add(new ScheduleSolver($"./Dataset/{datasets[i]}", AcceptanceMethod.II, 100));
-    ExpResult[i][0] = datasets[i];
+    solvers.Add(new ScheduleSolver($"./Dataset/{datasets[i]}", AcceptanceMethod.II, 20));
+    ExpResult[i+1][0] = datasets[i];
     //solvers.Add(new($"./Dataset/{dataset}", AcceptanceMethod.II, 10000));
     //solvers.Add(new($"./Dataset/{dataset}", AcceptanceMethod.II, 10000));
 }
 
-for (int i = 1; i < solvers.Count; i++) {
+for (int i = 0; i < solvers.Count; i++) {
     ScheduleSolver solver = solvers[i];
     solver.Run();
-    ExpResult[i][(int)solver.Method] = solver.ResultStr();
+    ExpResult[i+1][(int)solver.Method] = solver.ResultStr();
     Console.WriteLine($"{solver.ExperienceName} Done");
     Console.WriteLine(line);
 }
@@ -47,9 +62,9 @@ using (var csv = new CsvWriter(writer, System.Globalization.CultureInfo.Invarian
         csv.NextRecord();
     }
 }
-
 sw.Stop();
-Console.WriteLine($"{sw.Elapsed.TotalSeconds} seconds");
+Console.WriteLine($"Total {sw.Elapsed.TotalSeconds} seconds");
+Console.ReadLine();
 
 /*
 Problem Definition

@@ -1,5 +1,5 @@
 ﻿namespace Heuristic;
-public class IterativeImprove : HeuriAlgo {
+public class IterativeImprove : HeuristicAlgo {
     public IterativeImprove(int[][] data, int[] initOrder = null!) : base(data, initOrder) {
     }
     public override JobOrder Run() {
@@ -15,7 +15,7 @@ public class IterativeImprove : HeuriAlgo {
             Select(neighbors);
             itertime++;
             Spans.Add(current.makespan);
-        } while (current.makespan != previousSpan);
+        } while (current.makespan < previousSpan);
         IterTime = itertime;
         return current;
     }

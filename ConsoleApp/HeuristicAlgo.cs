@@ -2,7 +2,7 @@
 namespace Heuristic;
 
 
-public abstract class HeuriAlgo {
+public abstract class HeuristicAlgo {
     public int[][] Data { get; private set; }
     public int[] InitialOrder { get; private set; }
     public int JobNum { get; private set; }
@@ -13,7 +13,7 @@ public abstract class HeuriAlgo {
     protected List<int[]> neighbors = new(1000);
     protected JobOrder current;
     public int IterTime { get; protected set; }
-    public HeuriAlgo(int[][] data, int[] initOrder = null!) {
+    public HeuristicAlgo(int[][] data, int[] initOrder = null!) {
         Data = data;
         JobNum = data.Length;
         MachineNum = data[0].Length;
@@ -30,12 +30,12 @@ public abstract class HeuriAlgo {
                 int t = random.Next(i + 1);
                 (order[i], order[t]) = (order[t], order[i]);
             }
-            int score = Measure(order);
+            int score = Evaluate(order);
             InitialOrder = order.ToArray();
             return new JobOrder(order, score);
         }
         else {
-            int score = Measure(InitialOrder);
+            int score = Evaluate(InitialOrder);
             return new JobOrder(InitialOrder, score);
         }
     }
@@ -53,7 +53,7 @@ public abstract class HeuriAlgo {
     protected int Select(List<int[]> neighbors) {
         // Apply best-improve
         foreach (int[] nei in neighbors) {
-            int score = Measure(nei);
+            int score = Evaluate(nei);
             if (score < current.makespan) {
                 current.makespan = score;
                 current.order = nei;
@@ -61,7 +61,7 @@ public abstract class HeuriAlgo {
         }
         return current.makespan;
     }
-    public int Measure(int[] jobOrder) {
+    public int Evaluate(int[] jobOrder) {
         int[] machineTime = new int[MachineNum];
         foreach (int job in jobOrder) {
             int currentTime = machineTime[0];

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Library.Solver;
-using Library.Solver;
+﻿using Library.Solver;
 namespace Library;
 public class ScheduleGeneticEvolution {
     private static readonly Random random = new();
@@ -14,16 +7,13 @@ public class ScheduleGeneticEvolution {
         Population = population;
         PoolSize = poolSize;
         Data = data;
-        solver = null!;
     }
-    protected ScheduleSolverBase solver;
+    protected ScheduleSolverII solver;    // iterative improve
     public readonly int[][] Data;
     public readonly int Generations;
     public readonly int Population;
     public readonly int PoolSize;
-    public void SetSolver(ScheduleSolverBase solver) {
-        this.solver = solver;
-    }
+
     public JobSche Evolution() {
         List<JobSche> groups = new(Population);
         for (int i = 0; i < Population; i++) {
@@ -34,11 +24,20 @@ public class ScheduleGeneticEvolution {
 
             // mating pool
             List<JobSche> pool = MatingPool(groups);
-            // selectparent
-            (JobSche A, JobSche B) =  PickParents(pool);
-            // cross-over
+            groups.Clear();
+            for (int t = 0; t < Population; t += 2) {
+                // selectparent
+                (JobSche A, JobSche B) = PickParents(pool);
+                // cross-over
+                (JobSche C, JobSche D) = CrossOver(A, B);
+                groups.Add(C);
+                groups.Add(D);
+            }
             // local-search    
-
+            for (int sc = 0; sc < groups.Count; sc++) {
+                JobSche? sche = groups[sc];
+                sche = solver.II(sche);
+            }
         }
         return groups.MaxBy(sche => sche.makespan)!;
     }
@@ -47,15 +46,19 @@ public class ScheduleGeneticEvolution {
     }
     protected (JobSche, JobSche) PickParents(List<JobSche> pool) {
         int indexA = random.Next(pool.Count);
-        
-        int indexB= random.Next(pool.Count);
-        
+        int indexB = random.Next(pool.Count);
+        while (indexB == indexA) {
+            indexB = random.Next(pool.Count);
+        }
         return (pool[indexA], pool[indexB]);
     }
+    protected (JobSche, JobSche) CrossOver(JobSche A, JobSche B) {
+        return (B, A);
+    }
     protected void LocalSearch() {
-        
+
     }
 
 
-    
+
 }

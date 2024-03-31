@@ -30,7 +30,7 @@ public class Figure {
     /// <summary>
     /// Plot a group of (x,y) corrdinate
     /// </summary>
-    public void  ScatterChart<T>(T[] xs, T[] ys) {
+    public void ScatterChart<T>(T[] xs, T[] ys) {
         Plot.Add.Scatter(xs, ys);
     }
     /// <summary>
@@ -39,8 +39,8 @@ public class Figure {
     /// <param name="bars">span of each single job</param>
     /// <param name="instanceNum">machine num</param>
     /// <returns></returns>
-    public void  GanttChart(IEnumerable<Bar> bars, int instanceNum) {
-        
+    public void GanttChart(IEnumerable<Bar> bars, int instanceNum) {
+
         var barPlot = Plot.Add.Bars(bars);
         barPlot.Horizontal = true;
 

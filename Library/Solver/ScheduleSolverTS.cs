@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Solver; 
+﻿namespace Library.Solver;
+/// <summary>
+/// Tabu-Search
+/// </summary>
 public class ScheduleSolverTS(int[][] data) : ScheduleSolverBase(data) {
     public override JobSche Run(int rounds = 1) {
         throw new NotImplementedException();

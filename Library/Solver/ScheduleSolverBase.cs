@@ -1,8 +1,6 @@
 ﻿using ScottPlot;
-using System.Reflection.Metadata.Ecma335;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Library.Solver;  
+namespace Library.Solver;
 
 /// <summary>
 /// A abstract class host different heuristic method II, SA, TS, or RND
@@ -42,7 +40,7 @@ public abstract class ScheduleSolverBase {
         return machineTime[MachineNum - 1];
     }
     public List<Bar> GetGhattBars(JobSche sche = null) {
-        if(sche is null) {
+        if (sche is null) {
             sche = Result;
         }
         List<Bar> bars = new(JobNum * MachineNum);
@@ -69,7 +67,7 @@ public abstract class ScheduleSolverBase {
         int[] order = sche.order;
 
         for (int i = 0; i < order.Length; i++) {
-            for (int j = i+1; j < order.Length; j++) {
+            for (int j = i + 1; j < order.Length; j++) {
                 int[] temp = [.. order];
                 (temp[i], temp[j]) = (temp[j], temp[i]);
 
@@ -96,7 +94,7 @@ public abstract class ScheduleSolverBase {
     public void CheckData() {
         Console.WriteLine($"jobs: {JobNum} machines: {MachineNum}");
         for (int i = 0; i < Data.Length; i++) {
-            Console.WriteLine($"{i+1}, [{string.Join(", ", Data[i])}]");    
+            Console.WriteLine($"{i + 1}, [{string.Join(", ", Data[i])}]");
         }
     }
 }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Heuristic;
+﻿namespace Heuristic;
 public class SimulateAnnealing : HeuristicAlgo {
-   
+
     public SimulateAnnealing(int[][] data, int[] initOrder = null) : base(data, initOrder) {
     }
 

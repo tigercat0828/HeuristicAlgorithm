@@ -50,7 +50,7 @@ public abstract class HeuristicAlgo {
             }
         }
     }
-   
+
     public int Evaluate(int[] jobOrder) {
         int[] machineTime = new int[MachineNum];
         foreach (int job in jobOrder) {

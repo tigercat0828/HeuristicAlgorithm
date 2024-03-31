@@ -1,5 +1,5 @@
-﻿using CsvHelper;
-using Heuristic;
+﻿using Library;
+using Library.Solver;
 using System.Diagnostics;
 string line = new('=', 100);
 
@@ -15,40 +15,50 @@ string[] datasets = [
  "tai50_20_1.txt",
  "tai100_5_1.txt",
  "tai100_10_1.txt",
- "tai100_20_1.txt",
+ "tai100_20_1.txt", 
 ];
-string[][] ExpResult = new string[datasets.Length + 1][];
-for (int i = 0; i < ExpResult.Length; i++) ExpResult[i] = new string[4];
-ExpResult[0] = ["-", "II", "SA", "TS"];
 
-List<ScheduleSolver> solvers = [];
-for (int i = 0; i < datasets.Length; i++) {
-    solvers.Add(new ScheduleSolver($"./Dataset/{datasets[i]}", AcceptanceMethod.II, 20));
-    ExpResult[i + 1][0] = datasets[i];
-    //solvers.Add(new($"./Dataset/{dataset}", AcceptanceMethod.II, 10000));
-    //solvers.Add(new($"./Dataset/{dataset}", AcceptanceMethod.II, 10000));
-}
 
-for (int i = 0; i < solvers.Count; i++) {
-    ScheduleSolver solver = solvers[i];
-    solver.Run();
-    ExpResult[i + 1][(int)solver.Method] = solver.ResultStr();
-    Console.WriteLine($"{solver.ExperienceName} Done");
-    Console.WriteLine(line);
-}
+ScheduleSolverBase solver = new ScheduleSolverII(IO.LoadFile($"./Dataset/{datasets[0]}"));
+solver.CheckData();
+solver.Run(10000);
+Figure figure = new("Gantt", "makespan", "machine");
+figure.GanttChart(solver.GetGhattBars(), solver.MachineNum);
+figure.SaveFigure("./Output/output.png");
+Console.WriteLine(solver.Result.ToString());
 
-using (var writer = new StreamWriter("output100.csv"))
-using (var csv = new CsvWriter(writer, System.Globalization.CultureInfo.InvariantCulture)) {
-    foreach (var row in ExpResult) {
-        foreach (var field in row) {
-            csv.WriteField(field);
-        }
-        csv.NextRecord();
-    }
-}
-sw.Stop();
-Console.WriteLine($"Total {sw.Elapsed.TotalSeconds} seconds");
-Console.ReadLine();
+//string[][] ExpResult = new string[datasets.Length + 1][];
+//for (int i = 0; i < ExpResult.Length; i++) ExpResult[i] = new string[4];
+//ExpResult[0] = ["-", "II", "SA", "TS"];
+
+//List<ScheduleSolver> solvers = [];
+//for (int i = 0; i < datasets.Length; i++) {
+//    solvers.Add(new ScheduleSolver($"./Dataset/{datasets[i]}", AcceptanceMethod.II, 20));
+//    ExpResult[i + 1][0] = datasets[i];
+//    //solvers.Add(new($"./Dataset/{dataset}", AcceptanceMethod.II, 10000));
+//    //solvers.Add(new($"./Dataset/{dataset}", AcceptanceMethod.II, 10000));
+//}
+
+//for (int i = 0; i < solvers.Count; i++) {
+//    ScheduleSolver solver = solvers[i];
+//    solver.Run();
+//    ExpResult[i + 1][(int)solver.Method] = solver.ResultStr();
+//    Console.WriteLine($"{solver.ExperienceName} Done");
+//    Console.WriteLine(line);
+//}
+
+//using (var writer = new StreamWriter("output100.csv"))
+//using (var csv = new CsvWriter(writer, System.Globalization.CultureInfo.InvariantCulture)) {
+//    foreach (var row in ExpResult) {
+//        foreach (var field in row) {
+//            csv.WriteField(field);
+//        }
+//        csv.NextRecord();
+//    }
+//}
+//sw.Stop();
+//Console.WriteLine($"Total {sw.Elapsed.TotalSeconds} seconds");
+//Console.ReadLine();
 
 /*
 Problem Definition

@@ -1,7 +1,6 @@
 ﻿using ScottPlot;
 using ScottPlot.TickGenerators;
 using System.Diagnostics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Heuristic;
 
@@ -147,7 +146,7 @@ public class ScheduleSolver {
         }
 
         Plot myPlot = new();
-        var barPlot = myPlot.Add.Bars(bars.ToArray());
+        var barPlot = myPlot.Add.Bars(bars);
         barPlot.Horizontal = true;
 
         NumericManual ticks = new();

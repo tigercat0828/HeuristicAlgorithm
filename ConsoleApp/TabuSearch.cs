@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Heuristic;
+﻿namespace Heuristic;
 
 // https://www.geeksforgeeks.org/what-is-tabu-search/
 public class TabuSearch : HeuristicAlgo {
@@ -39,8 +33,8 @@ public class TabuSearch : HeuristicAlgo {
                     current.order = nei;
                 }
             }
-            
-            
+
+
         }
         return current.makespan;
     }

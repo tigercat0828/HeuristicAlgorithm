@@ -1,14 +1,15 @@
 ﻿using Library.Solver;
 namespace Library;
-public class ScheduleGeneticEvolution {
+public class ScheduleEvolution {
     private static readonly Random random = new();
-    public ScheduleGeneticEvolution(int[][] data, int generations, int population, int poolSize) {
+    public ScheduleEvolution(int[][] data, int generations, int population, int poolSize, ScheduleSolverBase solver) {
         Generations = generations;
         Population = population;
         PoolSize = poolSize;
         Data = data;
+        this.solver = solver;
     }
-    protected ScheduleSolverII solver;    // iterative improve
+    public readonly ScheduleSolverBase solver;    // iterative improve
     public readonly int[][] Data;
     public readonly int Generations;
     public readonly int Population;
@@ -36,7 +37,7 @@ public class ScheduleGeneticEvolution {
             // local-search    
             for (int sc = 0; sc < groups.Count; sc++) {
                 JobSche? sche = groups[sc];
-                sche = solver.II(sche);
+                sche = solver.Run(sche); // can apply SA or TS
             }
         }
         return groups.MaxBy(sche => sche.makespan)!;
@@ -45,6 +46,7 @@ public class ScheduleGeneticEvolution {
         return groups.OrderBy(sche => sche.makespan).Take(PoolSize).ToList();
     }
     protected (JobSche, JobSche) PickParents(List<JobSche> pool) {
+        
         int indexA = random.Next(pool.Count);
         int indexB = random.Next(pool.Count);
         while (indexB == indexA) {
@@ -55,10 +57,4 @@ public class ScheduleGeneticEvolution {
     protected (JobSche, JobSche) CrossOver(JobSche A, JobSche B) {
         return (B, A);
     }
-    protected void LocalSearch() {
-
-    }
-
-
-
 }

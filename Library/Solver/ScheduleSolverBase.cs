@@ -21,7 +21,8 @@ public abstract class ScheduleSolverBase {
     /// <summary>
     /// perform the solve problem procedure 
     /// </summary>
-    public abstract JobSche Run(int rounds = 1);
+    public abstract JobSche Run(JobSche init = null!);
+    public abstract JobSche RunMultiInstance(int instance);
     protected abstract JobSche Select(List<JobSche> neighbors, JobSche localBest);
 
     /// <summary>

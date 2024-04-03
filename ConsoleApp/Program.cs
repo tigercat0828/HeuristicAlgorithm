@@ -21,7 +21,7 @@ string[] datasets = [
 
 ScheduleSolverBase solver = new ScheduleSolverII(IO.LoadFile($"./Dataset/{datasets[0]}"));
 solver.CheckData();
-solver.Run(10000);
+solver.RunMultiInstance(10000);
 Figure figure = new("Gantt", "makespan", "machine");
 figure.GanttChart(solver.GetGhattBars(), solver.MachineNum);
 figure.SaveFigure("./Output/output.png");

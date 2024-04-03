@@ -1,9 +1,14 @@
-﻿namespace Library.Solver;
+﻿
+namespace Library.Solver;
 /// <summary>
 /// Tabu-Search
 /// </summary>
 public class ScheduleSolverTS(int[][] data) : ScheduleSolverBase(data) {
-    public override JobSche Run(int rounds = 1) {
+    public override JobSche Run(JobSche init = null) {
+        throw new NotImplementedException();
+    }
+
+    public override JobSche RunMultiInstance(int instance) {
         throw new NotImplementedException();
     }
 

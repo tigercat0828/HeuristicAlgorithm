@@ -1,10 +1,15 @@
-﻿namespace Library.Solver;
+﻿
+namespace Library.Solver;
 /// <summary>
 /// Simulated-Annealing
 /// </summary>
 /// <param name="data"></param>
 public class ScheduleSolverSA(int[][] data) : ScheduleSolverBase(data) {
-    public override JobSche Run(int rounds = 1) {
+    public override JobSche Run(JobSche init = null) {
+        throw new NotImplementedException();
+    }
+
+    public override JobSche RunMultiInstance(int instance) {
         throw new NotImplementedException();
     }
 

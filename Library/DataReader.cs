@@ -1,5 +1,5 @@
 ﻿namespace Library;
-public static class IO {
+public static class DataReader {
     public static int[][] LoadFile(string filename) {
         string[] lines = File.ReadAllLines(filename);
         string[] tokens = lines[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);

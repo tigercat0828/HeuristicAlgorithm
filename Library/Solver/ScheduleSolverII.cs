@@ -35,7 +35,7 @@ public class ScheduleSolverII(int[][] data) : ScheduleSolverBase(data) {
         Result = locals.MaxBy(order => order.makespan)!;
         return Result;
     }
-   
+
     /// <summary>
     /// acceptance criteria : Best-improving
     /// </summary>

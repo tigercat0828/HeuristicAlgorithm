@@ -1,4 +1,8 @@
 ﻿namespace Library;
+
+/// <summary>
+/// Solution Entity
+/// </summary>
 public class JobSche {
     public int[] order;
     public int makespan;
@@ -13,7 +17,7 @@ public class JobSche {
     public override string ToString() {
         return $"makespan={makespan}, [{string.Join(", ", order)}]";
     }
-    public string GetAnswerString() => string.Join(", ", order);
+    public string GetAnswerString() => string.Join(" ", order);
 
 
 }

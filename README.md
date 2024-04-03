@@ -1,6 +1,7 @@
 ## Param
-| Generation Num   |   |
+|     |   |
 |------------------|---|
+| Generation Num  |   |
 | Population Size  |   |
 | Mating Pool Size |   |
 ## Mating Pool

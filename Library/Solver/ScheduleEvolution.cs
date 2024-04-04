@@ -15,7 +15,7 @@ public class ScheduleEvolution {
         Data = data;
         this.solver = solver;
     }
-    public readonly ScheduleSolverBase solver;    // iterative improve
+    public readonly ScheduleSolverBase solver;    // local search policy
     public readonly int[][] Data;
     public readonly int Generations;
     public readonly int Population;
@@ -35,7 +35,7 @@ public class ScheduleEvolution {
             groups.Clear();
             for (int t = 0; t < Population; t += 2) {
                 // selectparent
-                (JobSche parent1, JobSche parent2) = PickParents(pool);
+                (JobSche parent1, JobSche parent2) = SelectParents(pool);
                 // cross-over
                 (JobSche children1, JobSche children2) = CrossOver(parent1, parent2);
                 
@@ -57,7 +57,7 @@ public class ScheduleEvolution {
     /// <summary>
     /// pick two entity from the pool
     /// </summary>
-    protected (JobSche, JobSche) PickParents(List<JobSche> pool) {
+    protected (JobSche, JobSche) SelectParents(List<JobSche> pool) {
 
         int indexA = random.Next(pool.Count);
         int indexB = random.Next(pool.Count);
@@ -94,9 +94,9 @@ public class ScheduleEvolution {
         FillChildWithRemainingElements(parent1.order, childOrder2);
         JobSche child1 = new JobSche(childOrder1, solver.Evaluate(childOrder1));
         JobSche child2 = new JobSche(childOrder2, solver.Evaluate(childOrder2));
-        return ( child1, child2);   
+        return ( child1, child2);
 
-        void FillChildWithRemainingElements(int[] parent, int[] child) {
+        static void FillChildWithRemainingElements(int[] parent, int[] child) {
             int length = parent.Length;
             int curPos = 0;
             for (int i = 0; i < length; i++) {

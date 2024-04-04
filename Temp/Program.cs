@@ -26,8 +26,6 @@ public class GeneticAlgorithm {
         }
 
         FillChildWithRemainingElements(parent2, child1);
-
-
         FillChildWithRemainingElements(parent1, child2);
 
         void FillChildWithRemainingElements(int[] parent, int[] child) {
@@ -44,18 +42,6 @@ public class GeneticAlgorithm {
         }
     }
 
-    private static void FillChildWithRemainingElements(int[] parent, int[] child) {
-        // Fill in the remaining positions in child with elements from parent, preserving their order
-        int length = parent.Length;
-        int curPos = 0;
-        for (int i = 0; i < length; i++) {
-            if (!child.Contains(parent[i])) {       // we can speed up search with new a set
-                // Find the next unfilled position in the child
-                while (child[curPos] != -1) curPos++;
-                child[curPos] = parent[i];
-            }
-        }
-    }
 
     static void Main(string[] args) {
         // Example parents (permutations of numbers 1 through 6)

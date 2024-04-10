@@ -10,12 +10,14 @@ public abstract class ScheduleSolverBase {
     public readonly int[][] Data;
     public readonly int JobNum;
     public readonly int MachineNum;
+    public List<int> SpanList;
     protected static readonly Random random = new();
     public JobSche Result { get; protected set; }
     public ScheduleSolverBase(int[][] data) {
         Data = data;
         JobNum = data.Length;
         MachineNum = data.First().Length;
+        SpanList = [];
     }
 
     /// <summary>

@@ -7,16 +7,20 @@ public class ScheduleSolverII(int[][] data) : ScheduleSolverBase(data) {
     /// <summary>
     /// II process
     /// </summary>
-    public override JobSche Run(JobSche init = null!) {
+    public override JobSche Run(JobSche init = null) {
         int previousSpan = int.MaxValue;
         JobSche s = init ?? InitialSolution();
         while (s.makespan < previousSpan) {
+
             previousSpan = s.makespan;
+            SpanList.Add(previousSpan);
+
             List<JobSche> neighbors = Neighbors(s);
             s = Select(neighbors, s);
         }
         return s;
     }
+
     /// <summary>
     /// Run multiple II instance parallely
     /// </summary>

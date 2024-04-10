@@ -16,6 +16,18 @@ public class Figure {
         Plot.YLabel(yLabel);
     }
     /// <summary>
+    /// Plot a group of (x,y) corrdinate
+    /// </summary>
+    public void ScatterChart<T>(List<T> xs, List<T> ys) {
+        Plot.Add.Scatter(xs, ys);
+    }
+    /// <summary>
+    /// Plot a group of (x,y) corrdinate
+    /// </summary>
+    public void ScatterChart<T>(T[] xs, T[] ys) {
+        Plot.Add.Scatter(xs, ys);
+    }
+    /// <summary>
     /// Plot multiple group of coordinate (x, y)
     /// </summary>
     public void ScatterChart<T>(List<T[]> xss, List<T[]> yss) {
@@ -27,12 +39,7 @@ public class Figure {
             plot.Add.Scatter(xss[i], yss[i]);
         }
     }
-    /// <summary>
-    /// Plot a group of (x,y) corrdinate
-    /// </summary>
-    public void ScatterChart<T>(T[] xs, T[] ys) {
-        Plot.Add.Scatter(xs, ys);
-    }
+
     /// <summary>
     /// Plot a GanttChart
     /// </summary>
@@ -50,6 +57,9 @@ public class Figure {
         Plot.Axes.Left.TickGenerator = ticks;
         Plot.Axes.SetLimitsY(bottom: instanceNum + 1, top: 0); // reverse the axis
     }
+    /// <summary>
+    /// save the figure into an image, only support .png file
+    /// </summary>
     public void SaveFigure(string filename, int width = 1600, int height = 900) {
         Plot.SavePng(filename, width, height);
     }

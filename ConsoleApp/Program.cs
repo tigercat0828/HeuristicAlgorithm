@@ -19,9 +19,10 @@ string[] datasets = [
  "tai100_20_1.txt",
 ];
 int[][] data = DataReader.LoadFile($"./Dataset/{datasets[0]}");
-ScheduleSolverBase solver = new ScheduleSolverII(data);
+ScheduleSolverBase solver = new ScheduleSolverSA(data, 1000, 0.001f, 0.99f);
 solver.CheckData();
 solver.Run();
+Console.WriteLine(solver.Result.ToString());
 Figure figure = new("II", "iteration", "makespan");
 figure.ScatterChart(Enumerable.Range(1, solver.SpanList.Count).ToList(), solver.SpanList );
 figure.SaveFigure("./Output/convergence.png");

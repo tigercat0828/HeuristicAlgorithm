@@ -8,35 +8,48 @@ namespace Library.Solver;
 /// </summary>
 /// <param name="data"></param>
 public class ScheduleSolverSA : ScheduleSolverBase {
-    public float InitTemp { get; }
-    public float MinTemp { get; }
-    public float Theta { get; }
-    private float currentTemp;
 
-    public ScheduleSolverSA(int[][] data, float initTem, float minTemp, float theta) : base(data) {
+    public readonly float Epsilon;
+    public readonly float Theta;
+    public readonly float Temperature;
+    private float currentTemperature;
+
+
+    public ScheduleSolverSA(int[][] data, float temperature, float epsilon, float theta) : base(data) {
         // temp = temperature
-        InitTemp = initTem;
-        MinTemp = minTemp;
+        Temperature = temperature;
+        currentTemperature = Temperature;
+        Epsilon = epsilon;
         Theta = theta;
     }
 
     public override JobSche Run(JobSche init = null) {
-        JobSche s = init ?? InitialSolution();
-        int score = int.MaxValue;
+        JobSche solution = init ?? InitialSolution();
 
-        while(currentTemp > MinTemp) {
-
-            // https://moodle3.ntnu.edu.tw/pluginfile.php/1258102/mod_resource/content/0/02_Trajectory-based%20Search%20I%20%282024%29.pdf
-            // p32 
-
-            currentTemp = currentTemp * Theta;
+        // cooling tactic
+        while(currentTemperature > Epsilon) {
+            JobSche neighbor = Neighbor(solution);
+            if(neighbor.makespan <= solution.makespan) {
+                solution = neighbor;
+            }
+            else {
+                float delta = (solution.makespan - neighbor.makespan)/ currentTemperature;
+                if(MathF.Exp(delta/ currentTemperature) > random.NextSingle()) {
+                    solution = neighbor;
+                }
+            }
+            SpanList.Add(solution.makespan);
+            currentTemperature *= Theta;   // geometry cooldown
         }
-        return new JobSche();
+        return solution;
     }
+    /// <summary>
+    /// random generate a single neightbor of sche
+    /// </summary>
     private JobSche Neighbor(JobSche sche) {
         int a  = random.Next(0, JobNum);
         int b = random.Next(0, JobNum);
-        int[] order = sche.order.ToArray();
+        int[] order = [.. sche.order];
         (order[a], order[b]) = (order[b], order[a]);
         int makespan = Evaluate(order);
         JobSche neighbor = new (order, makespan);
@@ -51,56 +64,3 @@ public class ScheduleSolverSA : ScheduleSolverBase {
     }
 }
 
-/*
-    while T > min_T:
-        T = T * theta
-        new_arrange = generat(ori_arrange, n)
-        new_t = evaluate(array, new_arrange, m, n)
-        if new_t < t:
-            t = new_t
-            ori_arrange = new_arrange
-            continue
-        span_list.append(t)
-        T_list.append(T)
-        p = math.exp((t - new_t) / T)
-        if random.random() <= p:
-            t = new_t
-            ori_arrange = new_arrange
-            continue
-    return t, ori_arrange
-
-
-
- public static double Anneal(double startTemperature, double endTemperature, double coolingRate)
-    {
-        double temp = startTemperature;
-        double currentSolution = random.NextDouble();
-        double bestSolution = currentSolution;
-
-        while (temp > endTemperature)
-        {
-            double newSolution = GetNeighbor(currentSolution);
-            double currentEnergy = ObjectiveFunction(currentSolution);
-            double newEnergy = ObjectiveFunction(newSolution);
-
-            if (AcceptanceProbability(currentEnergy, newEnergy, temp) > random.NextDouble())
-            {
-                currentSolution = newSolution;
-            }
-
-            if (ObjectiveFunction(currentSolution) < ObjectiveFunction(bestSolution))
-            {
-                bestSolution = currentSolution;
-            }
-
-            // 降低溫度
-            temp *= 1 - coolingRate;
-        }
-
-        return bestSolution;
-    }
-
-
-
- 
-*/

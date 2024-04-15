@@ -38,8 +38,8 @@ public class ScheduleEvolution {
                 (JobSche parent1, JobSche parent2) = SelectParents(pool);
                 // cross-over
                 (JobSche children1, JobSche children2) = CrossOver(parent1, parent2);
-                
-                // replace all parents
+
+                // POLICY : replace all parents : p
                 groups.Add(children1);
                 groups.Add(children2);
             }
@@ -55,7 +55,7 @@ public class ScheduleEvolution {
         return groups.OrderBy(sche => sche.makespan).Take(PoolSize).ToList();
     }
     /// <summary>
-    /// pick two entity from the pool
+    /// POLICY : randomly pick two entity from the pool
     /// </summary>
     protected (JobSche, JobSche) SelectParents(List<JobSche> pool) {
 
@@ -67,7 +67,7 @@ public class ScheduleEvolution {
         return (pool[indexA], pool[indexB]);
     }
     /// <summary>
-    /// Perform, LOX, Linear Order Crossover
+    /// POLICY : Perform LOX (Linear Order Crossover)
     /// </summary>
     /// <returns>Two newborn children</returns>
     protected (JobSche, JobSche) CrossOver(JobSche parent1, JobSche parent2) {
@@ -92,8 +92,8 @@ public class ScheduleEvolution {
 
         FillChildWithRemainingElements(parent2.order, childOrder1);
         FillChildWithRemainingElements(parent1.order, childOrder2);
-        JobSche child1 = new JobSche(childOrder1, solver.Evaluate(childOrder1));
-        JobSche child2 = new JobSche(childOrder2, solver.Evaluate(childOrder2));
+        JobSche child1 = new (childOrder1, solver.Evaluate(childOrder1));
+        JobSche child2 = new (childOrder2, solver.Evaluate(childOrder2));
         return ( child1, child2);
 
         static void FillChildWithRemainingElements(int[] parent, int[] child) {

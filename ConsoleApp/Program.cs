@@ -1,11 +1,5 @@
 ﻿using Library;
 using Library.Solver;
-using System.Diagnostics;
-using System.Net;
-string line = new('=', 100);
-
-Stopwatch sw = new();
-sw.Start();
 
 string[] datasets = [
  "tai20_5_1.txt",
@@ -18,20 +12,27 @@ string[] datasets = [
  "tai100_10_1.txt",
  "tai100_20_1.txt",
 ];
+
 int[][] data = DataReader.LoadFile($"./Dataset/{datasets[0]}");
-ScheduleSolverBase solver = new ScheduleSolverSA(data, 1000, 0.001f, 0.99f);
-solver.CheckData();
-solver.Run();
-Console.WriteLine(solver.Result.ToString());
-Figure figure = new("II", "iteration", "makespan");
-figure.ScatterChart(Enumerable.Range(1, solver.SpanList.Count).ToList(), solver.SpanList );
-figure.SaveFigure("./Output/convergence.png");
-/// Run a single instance II for a dataset
-//int[][] data = DataReader.LoadFile($"./Dataset/{datasets[0]}");
-//ScheduleSolverBase solver = new ScheduleSolverII(data);
+//SolverBase solver = new SolverSA(data, 1000, 0.001f, 0.99f);
 //solver.CheckData();
-//solver.RunMultiInstance(10000);
-//Figure figure = new("Gantt", "makespan", "machine");
-//figure.GanttChart(solver.GetGhattBars(), solver.MachineNum);
-//figure.SaveFigure("./Output/output.png");
+//solver.Run();
 //Console.WriteLine(solver.Result.ToString());
+//Figure figure = new("II", "iterations", "makespan");
+//figure.ScatterChart(Enumerable.Range(1, solver.SpanList.Count).ToList(), solver.SpanList);
+//figure.SaveFigure("./Output/convergence.png");
+
+ScheduleEvolutionTemp temp = new(
+    data,
+    100,
+    1000,
+    100,
+    new SolverSA(data, 1000, 0.001f, 0.99f));
+
+
+ScheduleEvolution evo = new ScheduleEvolution.Builder().WithData(data)
+                                                       .SetSolver(new SolverII())
+                                                       .SetCrossoverMethod(EvoAlgo.LinearCrossOver)
+                                                       .SetMatingPoolMethod(EvoAlgo.TopRatio)
+                                                       .SetParentSelectionMethod(EvoAlgo.RandomSelect)
+                                                       .Build();

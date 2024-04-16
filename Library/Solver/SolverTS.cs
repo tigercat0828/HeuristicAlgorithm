@@ -3,7 +3,7 @@ namespace Library.Solver;
 /// <summary>
 /// Tabu-Search
 /// </summary>
-public class ScheduleSolverTS(int[][] data) : ScheduleSolverBase(data) {
+public class SolverTS(int[][] data) : SolverBase(data) {
     public override JobSche Run(JobSche init = null) {
         throw new NotImplementedException();
     }

@@ -3,7 +3,8 @@
 /// <summary>
 /// Iterative-Improvement
 /// </summary>
-public class ScheduleSolverII(int[][] data) : ScheduleSolverBase(data) {
+public class SolverII() : SolverBase() {
+
     /// <summary>
     /// II process
     /// </summary>
@@ -36,7 +37,7 @@ public class ScheduleSolverII(int[][] data) : ScheduleSolverBase(data) {
         Parallel.For(0, instance, i => {
             locals[i] = instances[i].Invoke(null!);
         });
-        Result = locals.MaxBy(order => order.makespan)!;
+        Result = locals.MinBy(order => order.makespan)!;
         return Result;
     }
 

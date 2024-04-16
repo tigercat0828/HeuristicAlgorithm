@@ -5,21 +5,26 @@ namespace Library.Solver;
 /// <summary>
 /// A abstract class host different heuristic method II, SA, TS, or RND
 /// </summary>
-public abstract class ScheduleSolverBase {
+public abstract class SolverBase {
 
-    public readonly int[][] Data;
+    public int[][] Data;
     public readonly int JobNum;
     public readonly int MachineNum;
     public List<int> SpanList;
     protected static readonly Random random = new();
     public JobSche Result { get; protected set; }
-    public ScheduleSolverBase(int[][] data) {
+    public SolverBase(int[][] data) {
         Data = data;
         JobNum = data.Length;
         MachineNum = data.First().Length;
         SpanList = [];
     }
+    public SolverBase() {
 
+    }
+    public void SetData(int[][] data) {
+        Data = data;
+    }
     /// <summary>
     /// perform the solve problem procedure 
     /// </summary>

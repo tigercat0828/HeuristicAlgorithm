@@ -1,112 +1,107 @@
-﻿namespace Library.Solver;
-/// <summary>
-/// Solve schedule problem with genetic evolution
-/// </summary>
-public class ScheduleEvolution {
-    private static readonly Random random = new();
-    /// <summary>
-    /// select the local search algorithm with passing solver class. II/SA/TS/RND
-    /// </summary>
-    /// <param name="solver"></param>
-    public ScheduleEvolution(int[][] data, int generations, int population, int poolSize, ScheduleSolverBase solver) {
-        Generations = generations;
-        Population = population;
-        PoolSize = poolSize;
-        Data = data;
-        this.solver = solver;
-    }
-    public readonly ScheduleSolverBase solver;    // local search policy
-    public readonly int[][] Data;
-    public readonly int Generations;
-    public readonly int Population;
-    public readonly int PoolSize;
+﻿using Library;
+using Library.Solver;
 
+
+public class ScheduleEvolution {
+    public delegate List<JobSche> MatingPoolDelegate(List<JobSche> groups, int take);
+    public delegate (JobSche, JobSche) ParentSelectionDelegate(List<JobSche> pool);
+    public delegate (JobSche, JobSche) CrossoverDelegate(JobSche parent1, JobSche parent2, SolverBase solver);
+    //public delegate (JobSche, JobSche) ChooseSubstitutionDelegate(JobSche A, JobSche B, JobSche C,JobSche D);
+    public delegate void MutationDelegate(JobSche sche);
+    // Configuration
+    private int[][] m_Data;
+    private int m_Generations;
+    private int m_Population;
+    private int m_PoolSize;
+    private float m_MutationRate;
+
+    List<JobSche> m_MatingPool = [];
+
+    private SolverBase m_Solver; // local search policy
+    public MatingPoolDelegate MatingPool { get; set; }
+    public ParentSelectionDelegate ParentSelection { get; set; }
+    public CrossoverDelegate Crossover { get; set; }
+    public MutationDelegate Mutation { get; set; }
+
+    // Env Selection delegate
+    private ScheduleEvolution() { } // Make the constructor private
     public JobSche Evolution() {
-        List<JobSche> groups = new(Population);
-        for (int i = 0; i < Population; i++) {
-            JobSche job = solver.InitialSolution();
+        List<JobSche> groups = new(m_Population);
+        for (int i = 0; i < m_Population; i++) {
+            JobSche job = m_Solver.InitialSolution();
             groups.Add(job);
         }
-        for (int i = 0; i < Generations; i++) {
-
+        for (int i = 0; i < m_Generations; i++) {
             // mating pool
-            List<JobSche> pool = MatingPool(groups);
+            List<JobSche> pool = MatingPool(groups, m_PoolSize);
 
             groups.Clear();
-            for (int t = 0; t < Population; t += 2) {
+            for (int t = 0; t < m_Population; t += 2) {
                 // selectparent
-                (JobSche parent1, JobSche parent2) = SelectParents(pool);
+                (JobSche parent1, JobSche parent2) = ParentSelection(pool);
                 // cross-over
-                (JobSche children1, JobSche children2) = CrossOver(parent1, parent2);
-                
+                (JobSche children1, JobSche children2) = Crossover(parent1, parent2, m_Solver);
+
                 // replace all parents
                 groups.Add(children1);
                 groups.Add(children2);
             }
+            // mutation the current population
+            //for (int t = 0; t < groups.Count; t++) {
+            //    if(EvoRandom.Prob() < m_MutationRate) {
+            //        Mutation(groups[i]);
+            //    }
+            //}
+
             // local-search    
             for (int sc = 0; sc < groups.Count; sc++) {
                 JobSche? sche = groups[sc];
-                sche = solver.Run(sche); // can apply SA or TS
+                sche = m_Solver.Run(sche); // can apply SA or TS
             }
         }
-        return groups.MaxBy(sche => sche.makespan)!;
+        return groups.MinBy(sche => sche.makespan)!;
     }
-    protected List<JobSche> MatingPool(List<JobSche> groups) {
-        return groups.OrderBy(sche => sche.makespan).Take(PoolSize).ToList();
-    }
-    /// <summary>
-    /// pick two entity from the pool
-    /// </summary>
-    protected (JobSche, JobSche) SelectParents(List<JobSche> pool) {
 
-        int indexA = random.Next(pool.Count);
-        int indexB = random.Next(pool.Count);
-        while (indexB == indexA) {
-            indexB = random.Next(pool.Count);
+    public class Builder {
+        bool HasData = false;
+        private ScheduleEvolution _instance = new();
+
+        public Builder WithData(int[][] data) {
+            _instance.m_Data = data;
+            HasData = true;
+            return this;
         }
-        return (pool[indexA], pool[indexB]);
-    }
-    /// <summary>
-    /// Perform, LOX, Linear Order Crossover
-    /// </summary>
-    /// <returns>Two newborn children</returns>
-    protected (JobSche, JobSche) CrossOver(JobSche parent1, JobSche parent2) {
-        int length = parent1.order.Length;
-        int[] childOrder1 = new int[length];
-        int[] childOrder2 = new int[length];
-
-        // Choose two random crossover points as the slice
-        int start = random.Next(length);
-        int end = random.Next(start, length);
-        // Initialize children with -1 to indicate unfilled positions
-        for (int i = 0; i < length; i++) {
-            childOrder1[i] = -1;
-            childOrder2[i] = -1;
+        public Builder Configure(int generations, int population, int poolSize, float mutationRate) {
+            _instance.m_Generations = generations;
+            _instance.m_Population = population;
+            _instance.m_PoolSize = poolSize;
+            _instance.m_MutationRate = mutationRate;
+            return this;
         }
-
-        // Copy a slice from each parent based on the crossover points
-        for (int i = start; i <= end; i++) {
-            childOrder1[i] = parent1.order[i];
-            childOrder2[i] = parent2.order[i];
-        }
-
-        FillChildWithRemainingElements(parent2.order, childOrder1);
-        FillChildWithRemainingElements(parent1.order, childOrder2);
-        JobSche child1 = new JobSche(childOrder1, solver.Evaluate(childOrder1));
-        JobSche child2 = new JobSche(childOrder2, solver.Evaluate(childOrder2));
-        return ( child1, child2);
-
-        static void FillChildWithRemainingElements(int[] parent, int[] child) {
-            int length = parent.Length;
-            int curPos = 0;
-            for (int i = 0; i < length; i++) {
-                if (!child.Contains(parent[i])) {       // we can speed up search with new a set
-                                                        // Find the next unfilled position in the child
-                    while (child[curPos] != -1) curPos++;
-
-                    child[curPos] = parent[i];
-                }
+        public Builder SetSolver(SolverBase solver) {
+            if (!HasData) {
+                throw new InvalidOperationException("should load data before set solver");
             }
+            _instance.m_Solver = solver;
+            _instance.m_Solver.SetData(_instance.m_Data);
+            return this;
+        }
+        public Builder SetMatingPoolMethod(MatingPoolDelegate matingPool) {
+            _instance.MatingPool = matingPool;
+            return this;
+        }
+        public Builder SetParentSelectionMethod(ParentSelectionDelegate parentSelection) {
+            _instance.ParentSelection = parentSelection;
+            return this;
+        }
+        public Builder SetCrossoverMethod(CrossoverDelegate crossover) {
+            _instance.Crossover = crossover;
+            return this;
+        }
+
+        public ScheduleEvolution Build() {
+            // Optionally, validate the _instance before returning
+            return _instance;
         }
     }
 }

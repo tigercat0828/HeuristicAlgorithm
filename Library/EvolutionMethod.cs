@@ -1,22 +1,37 @@
 ﻿using Library.Solver;
+using System.Net;
+using System.Transactions;
 
 namespace Library;
 public static class EvolutionMethod {
 
     #region Mating Pool 
-    public static List<JobSche> Ntournament(List<JobSche> groups, int take) {
-        return groups.OrderBy(sche => sche.makespan).Take(take).ToList();
+    public static List<JobSche> Truncation(List<JobSche> group, int take) {
+        return group.OrderBy(sche => sche.makespan).Take(take).ToList();
     }
-    #endregion
+    public static List<JobSche> RouletteWheel(List<JobSche> group, int take) {
+        List<JobSche> newGroup = new(group.Count);
+        double totalFitness = group.Select(sc => sc.makespan).Sum();
+        List<double> probabilities = group.Select(p => p.makespan / totalFitness).ToList();
 
-    #region Parent Selection
-    public static (JobSche, JobSche) RandomSelect(List<JobSche> pool) {
-        int indexA = EvoRandom.Next(pool.Count);
-        int indexB = EvoRandom.Next(pool.Count);
-        while (indexB == indexA) {
-            indexB = EvoRandom.Next(pool.Count);
+        for (int t = 0; t < take; t++) {
+            double prob = EvoRandom.Prob();
+            double cumulativeProb = 0;
+            for (int i = 0; i < probabilities.Count; i++) {
+                cumulativeProb += probabilities[i];
+                if (prob <= cumulativeProb) {
+                    newGroup.Add(new JobSche(group[i]));
+                    break;
+                }
+            }
         }
-        return (pool[indexA], pool[indexB]);
+        return newGroup;
+    }
+    public static List<JobSche> LinearRanking(List<JobSche> groups, int take) {
+        throw new NotImplementedException();
+    }
+    public static List<JobSche> ExponentialRanking(List<JobSche> groups, int take) {
+        throw new NotImplementedException();
     }
     #endregion
 

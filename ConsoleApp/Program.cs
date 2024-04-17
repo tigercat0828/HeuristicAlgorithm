@@ -13,17 +13,17 @@ string[] datasets = [
  "tai100_20_1.txt",
 ];
 
-int[][] data = DataReader.LoadFile($"./Dataset/{datasets[0]}");
+int[][] data = DataReader.LoadFile($"./Dataset/{datasets[8]}");
 
-
-Evolution evo = new Evolution.Builder().Configure("tai20_5_1", 10, 1000, 100, 0.001)
-                                                       .WithData(data)
-                                                       .SetMatingPoolMethod(EvolutionMethod.Ntournament)
-                                                       .SetParentSelectionMethod(EvolutionMethod.RandomSelect)
-                                                       .SetCrossoverMethod(EvolutionMethod.LinearOrderCrossOver)
-                                                       .SetMutationMethod(EvolutionMethod.EasySwap)
-                                                       .SetSolver(new SolverII())
-                                                       .Build();
+Evolution evo = new Evolution.Builder().Configure("tai100_20_1", 8, 10, 4, 0.001)
+                                        //.SetInitSolutions()                                       // IIinit
+                                       .WithData(data)
+                                       .SetMatingPoolMethod(EvolutionMethod.Truncation)             // Truncation|RouletteWheel|LinearRanking|ExponentialRanking
+                                       .SetCrossoverMethod(EvolutionMethod.LinearOrderCrossOver)    // LOX|
+                                       .SetMutationMethod(EvolutionMethod.EasySwap)                 // EasySwap|Null
+                                       //.SetEnvironmentSelection()                                 // generational model|2/4mechanism
+                                       .SetSolver(new SolverII())                                   // II|SA
+                                       .Build();
 var result = evo.Run();
 Console.WriteLine(result);
 Figure figure = new("Gantt", "makespan", "machine #");

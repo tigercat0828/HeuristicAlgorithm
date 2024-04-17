@@ -8,14 +8,14 @@ public class ScheduleEvolution {
     /// select the local search algorithm with passing solver class. II/SA/TS/RND
     /// </summary>
     /// <param name="solver"></param>
-    public ScheduleEvolution(int[][] data, int generations, int population, int poolSize, ScheduleSolverBase solver) {
+    public ScheduleEvolution(int[][] data, int generations, int population, int poolSize, SolverBase solver) {
         Generations = generations;
         Population = population;
         PoolSize = poolSize;
         Data = data;
         this.solver = solver;
     }
-    public readonly ScheduleSolverBase solver;    // local search policy
+    public readonly SolverBase solver;    // local search policy
     public readonly int[][] Data;
     public readonly int Generations;
     public readonly int Population;

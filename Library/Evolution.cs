@@ -14,9 +14,9 @@ public class Evolution {
 
     private SolverBase m_Solver; // local search policy
     private MatingPoolDelegate MatingPool { get; set; }
-    private ParentSelectionDelegate ParentSelection { get; set; }
     private CrossoverDelegate Crossover { get; set; }
     private MutationDelegate Mutation { get; set; }
+    private EnvironmentSelectionDelegate EnvironmentSelection { get; set; }
 
     // Env Selection delegate
     private Evolution() { } // Make the constructor private
@@ -27,43 +27,51 @@ public class Evolution {
             groups.Add(job);
         }
         for (int i = 0; i < m_Generations; i++) {
-            Console.WriteLine($"Gen {i}");
+            double averageFitness = groups.Select(sc => sc.makespan).Average();
+            Console.WriteLine($"Gen {i} avg={averageFitness}");
             // mating pool
             List<JobSche> pool = MatingPool(groups, m_PoolSize);
 
             groups.Clear();
             for (int t = 0; t < m_Population; t += 2) {
                 // selectparent
-                (JobSche parent1, JobSche parent2) = ParentSelection(pool);
+                (JobSche parent1, JobSche parent2) = SelectParent(pool);
                 // cross-over
                 (JobSche children1, JobSche children2) = Crossover(parent1, parent2, m_Solver);
 
-                // replace all parents
+                if (EvoRandom.Prob() < m_MutationRate) Mutation(children1);
+                if (EvoRandom.Prob() < m_MutationRate) Mutation(children2);
+
+
+                // environment selection replace all parents
                 groups.Add(children1);
                 groups.Add(children2);
             }
-            // mutation the current population
-            for (int t = 0; t < groups.Count; t++) {
-                if (EvoRandom.Prob() < m_MutationRate) {
-                    Mutation(groups[i]);
-                    Console.WriteLine("Mutate!");
-                }
-            }
+         
 
             // local-search    
             for (int sc = 0; sc < groups.Count; sc++) {
+                //Console.WriteLine($"processing {sc}");
                 JobSche? sche = groups[sc];
                 sche = m_Solver.Run(sche); // can apply SA or TS
             }
         }
         return groups.MinBy(sche => sche.makespan)!;
     }
+
+    static (JobSche, JobSche) SelectParent(List<JobSche> pool) {
+        int indexA = EvoRandom.Next(pool.Count);
+        int indexB = EvoRandom.Next(pool.Count);
+        while (indexB == indexA) {
+            indexB = EvoRandom.Next(pool.Count);
+        }
+        return (pool[indexA], pool[indexB]);
+    }
     // ====================================================================================
     // Builder-Pattern
     public delegate List<JobSche> MatingPoolDelegate(List<JobSche> groups, int take);
-    public delegate (JobSche, JobSche) ParentSelectionDelegate(List<JobSche> pool);
     public delegate (JobSche, JobSche) CrossoverDelegate(JobSche parent1, JobSche parent2, SolverBase solver);
-    //public delegate (JobSche, JobSche) ChooseSubstitutionDelegate(JobSche A, JobSche B, JobSche C,JobSche D);
+    public delegate (JobSche, JobSche) EnvironmentSelectionDelegate(JobSche A, JobSche B, JobSche C,JobSche D);
     public delegate void MutationDelegate(JobSche sche);
     public class Builder {
         bool hasData = false;
@@ -94,10 +102,6 @@ public class Evolution {
             _instance.MatingPool = matingPool;
             return this;
         }
-        public Builder SetParentSelectionMethod(ParentSelectionDelegate parentSelection) {
-            _instance.ParentSelection = parentSelection;
-            return this;
-        }
         public Builder SetCrossoverMethod(CrossoverDelegate crossover) {
             _instance.Crossover = crossover;
             return this;
@@ -106,7 +110,10 @@ public class Evolution {
             _instance.Mutation = mutation;
             return this;
         }
-
+        public Builder SetEnvironmentSelection(EnvironmentSelectionDelegate environmentSelection) {
+            _instance.EnvironmentSelection = environmentSelection;
+            return this;
+        }
         public Evolution Build() {
             return _instance;
         }

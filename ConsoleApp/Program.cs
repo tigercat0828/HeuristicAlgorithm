@@ -15,7 +15,7 @@ string[] datasets = [
 
 int[][] data = DataReader.LoadFile($"./Dataset/{datasets[8]}");
 
-Evolution evo = new Evolution.Builder().Configure("tai100_20_1", 8, 10, 4, 0.001)
+Evolution evo = new Evolution.Builder().Configure("tai100_20_1", 30, 12, 4, 0.001)
                                         //.SetInitSolutions()                                       // IIinit
                                        .WithData(data)
                                        .SetMatingPoolMethod(EvolutionMethod.Truncation)             // Truncation|RouletteWheel|LinearRanking|ExponentialRanking
@@ -30,3 +30,4 @@ Figure figure = new("Gantt", "makespan", "machine #");
 
 figure.GanttChart(data, result);
 figure.SaveFigure("./Output/Gantt.png");
+

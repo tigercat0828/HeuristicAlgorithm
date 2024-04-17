@@ -9,7 +9,7 @@ public class SolverSA : SolverBase {
     public readonly float Temperature;
     private float currentTemperature;
 
-    public SolverSA(float temperature, float epsilon, float theta)  {
+    public SolverSA(float temperature, float epsilon, float theta) {
         // temp = temperature
         Temperature = temperature;
         currentTemperature = Temperature;

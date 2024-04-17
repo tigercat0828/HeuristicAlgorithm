@@ -1,5 +1,6 @@
-﻿
-namespace Library.Solver;
+﻿using Library.Solver;
+
+namespace Library;
 public static class EvolutionMethod {
 
     #region Mating Pool 
@@ -60,11 +61,11 @@ public static class EvolutionMethod {
     #endregion
 
     #region Mutation
-    public static void EasySwap (JobSche entity) {
+    public static void EasySwap(JobSche entity) {
         int jobs = entity.order.Length;
         int a = EvoRandom.Next(jobs);
         int b = EvoRandom.Next(jobs);
-        (entity.order[a], entity.order[b])= (entity.order[b], entity.order[a]);
+        (entity.order[a], entity.order[b]) = (entity.order[b], entity.order[a]);
     }
     #endregion
 

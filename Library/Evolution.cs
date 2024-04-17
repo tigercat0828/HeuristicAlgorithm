@@ -5,7 +5,7 @@ using Library.Solver;
 public class Evolution {
 
     // Configuration
-    public string ExpName { get; set; } 
+    public string ExpName { get; set; }
     private int[][] m_Data;
     private int m_Generations;
     private int m_Population;

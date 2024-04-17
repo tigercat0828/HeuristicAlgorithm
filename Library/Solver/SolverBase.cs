@@ -1,7 +1,4 @@
-﻿using ScottPlot;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace Library.Solver;
+﻿namespace Library.Solver;
 
 /// <summary>
 /// A abstract class host different heuristic method II, SA, TS, or RND
@@ -47,7 +44,7 @@ public abstract class SolverBase {
         }
         return machineTime[MachineNum - 1];
     }
-   
+
 
     public JobSche InitialSolution() {
         int[] order = new int[JobNum];

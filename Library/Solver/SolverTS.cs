@@ -6,8 +6,8 @@ namespace Library.Solver;
 public class SolverTS() : SolverBase {
     public override JobSche Run(JobSche init = null) {
         EnsureDataLoaded();
-               JobSche solution = init ?? InitialSolution();
+        JobSche solution = init ?? InitialSolution();
         throw new NotImplementedException();
     }
- 
+
 }

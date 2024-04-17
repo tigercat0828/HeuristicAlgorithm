@@ -6,15 +6,18 @@ namespace Library;
 public static class EvolutionMethod {
 
     #region Mating Pool 
-    public static List<JobSche> Truncation(List<JobSche> group, int take) {
-        return group.OrderBy(sche => sche.makespan).Take(take).ToList();
+    public static List<JobSche> Truncation(List<JobSche> group) {
+        return group.OrderBy(sche => sche.makespan).Take(group.Count/2).ToList();
     }
-    public static List<JobSche> RouletteWheel(List<JobSche> group, int take) {
+    public static List<JobSche> RouletteWheel(List<JobSche> group) {
         List<JobSche> newGroup = new(group.Count);
-        double totalFitness = group.Select(sc => sc.makespan).Sum();
-        List<double> probabilities = group.Select(p => p.makespan / totalFitness).ToList();
+        int maxSpan = group.MaxBy(sc=>sc.makespan)!.makespan;
+        int[] spans = group.Select(sc => maxSpan - sc.makespan).ToArray();
+        
+        double total = spans.Sum();
+        List<double> probabilities = spans.Select(s => s / total).ToList();
 
-        for (int t = 0; t < take; t++) {
+        for (int t = 0; t < group.Count; t++) {
             double prob = EvoRandom.Prob();
             double cumulativeProb = 0;
             for (int i = 0; i < probabilities.Count; i++) {
@@ -30,9 +33,7 @@ public static class EvolutionMethod {
     public static List<JobSche> LinearRanking(List<JobSche> groups, int take) {
         throw new NotImplementedException();
     }
-    public static List<JobSche> ExponentialRanking(List<JobSche> groups, int take) {
-        throw new NotImplementedException();
-    }
+    
     #endregion
 
     #region Crossover
@@ -76,6 +77,7 @@ public static class EvolutionMethod {
     #endregion
 
     #region Mutation
+
     public static void EasySwap(JobSche entity) {
         int jobs = entity.order.Length;
         int a = EvoRandom.Next(jobs);
@@ -84,4 +86,37 @@ public static class EvolutionMethod {
     }
     #endregion
 
+    #region Environment Selection
+    /// <summary>
+    /// just return children
+    /// </summary>
+    public static (JobSche, JobSche) GenerationModel(JobSche parent1, JobSche parent2, JobSche child1, JobSche child2) {
+    
+        return (child1, child2);
+    }
+    
+    /// <summary>
+    /// 2 parents, 2 children, pick best 2 entity
+    /// </summary>
+    public static (JobSche, JobSche) Mechanism_2_4(JobSche parent1, JobSche parent2, JobSche child1, JobSche child2) {
+       
+        // Compare the first two and second two numbers
+        var (low1, high1) = parent1.makespan < parent2.makespan ? (parent1, parent2) : (parent2, parent1);
+        var (low2, high2) = child1.makespan < child2.makespan ? (child1, child2) : (child2, child1);
+
+        // Find the lowest of the four numbers
+        var lowest = low1.makespan < low2.makespan ? low1 : low2;
+
+        // Find the second lowest by comparing the higher of the lowest pair and the lower of the higher pair
+        JobSche secondLowest;
+        if (lowest == low1) {
+            secondLowest = low2.makespan < high1.makespan ? low2 : high1;
+        }
+        else {
+            secondLowest = low1.makespan < high2.makespan ? low1 : high2;
+        }
+
+        return (lowest, secondLowest);
+    }
+    #endregion
 }

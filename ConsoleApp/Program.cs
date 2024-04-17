@@ -13,16 +13,17 @@ string[] datasets = [
  "tai100_20_1.txt",
 ];
 
-int[][] data = DataReader.LoadFile($"./Dataset/{datasets[8]}");
+int[][] data = DataReader.LoadFile($"./Dataset/{datasets[0]}");
 
 Evolution evo = new Evolution.Builder().Configure("tai100_20_1", 30, 12, 4, 0.001)
-                                        //.SetInitSolutions()                                       // IIinit
                                        .WithData(data)
-                                       .SetMatingPoolMethod(EvolutionMethod.Truncation)             // Truncation|RouletteWheel|LinearRanking|ExponentialRanking
-                                       .SetCrossoverMethod(EvolutionMethod.LinearOrderCrossOver)    // LOX|
-                                       .SetMutationMethod(EvolutionMethod.EasySwap)                 // EasySwap|Null
-                                       //.SetEnvironmentSelection()                                 // generational model|2/4mechanism
-                                       .SetSolver(new SolverII())                                   // II|SA
+                                        //.SetInitSolutions()                                               // IIinit
+                                       .SetMatingPoolMethod(EvolutionMethod.Truncation)                     // Truncation|RouletteWheel|LinearRanking|ExponentialRanking
+                                       .SetCrossoverMethod(EvolutionMethod.LinearOrderCrossOver)            // LOX
+                                       .SetMutationMethod(EvolutionMethod.EasySwap)                         // EasySwap
+                                       .SetEnvironmentSelection(EvolutionMethod.GenerationModel)            // generational model|2/4mechanism
+                                       .SetSolver(new SolverSA(100,0.001f,0.985f))   // SA   
+                                       //.SetSolver(new SolverII())   // II  
                                        .Build();
 var result = evo.Run();
 Console.WriteLine(result);

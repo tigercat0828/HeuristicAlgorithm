@@ -26,26 +26,47 @@ public class Evolution {
             JobSche job = m_Solver.InitialSolution();
             groups.Add(job);
         }
+        
         for (int i = 0; i < m_Generations; i++) {
-            double averageFitness = groups.Select(sc => sc.makespan).Average();
-            Console.WriteLine($"Gen {i} avg={averageFitness}");
+            int[] spans = groups.Select(sc => sc.makespan).ToArray();
+            double mean = spans.Average();
+            double variance = spans.Sum(number => Math.Pow(number - mean, 2)) / spans.Length;
+            double stdDeviation = Math.Sqrt(variance);
+
+            Console.WriteLine($"Gen {i} : μ = {mean:F2}, σ = {stdDeviation}");           
             // mating pool
-            List<JobSche> pool = MatingPool(groups, m_PoolSize);
+            List<JobSche> pool = MatingPool(groups);
+
+            for (int t = 0; t < pool.Count; t++) {
+                (JobSche child1, JobSche child2) = Crossover(parent1, parent2, m_Solver);
+
+                // mutation
+                if (EvoRandom.Prob() < m_MutationRate) Mutation(child1);
+                if (EvoRandom.Prob() < m_MutationRate) Mutation(child2);
+
+                // environment selection 
+                (JobSche sc1, JobSche sc2) = EnvironmentSelection(parent1, parent2, child1, child2);
+                groups.Add(sc1);
+                groups.Add(sc2);
+            }
+
 
             groups.Clear();
             for (int t = 0; t < m_Population; t += 2) {
+                
                 // selectparent
                 (JobSche parent1, JobSche parent2) = SelectParent(pool);
                 // cross-over
-                (JobSche children1, JobSche children2) = Crossover(parent1, parent2, m_Solver);
+                (JobSche child1, JobSche child2) = Crossover(parent1, parent2, m_Solver);
 
-                if (EvoRandom.Prob() < m_MutationRate) Mutation(children1);
-                if (EvoRandom.Prob() < m_MutationRate) Mutation(children2);
+                // mutation
+                if (EvoRandom.Prob() < m_MutationRate) Mutation(child1);
+                if (EvoRandom.Prob() < m_MutationRate) Mutation(child2);
 
-
-                // environment selection replace all parents
-                groups.Add(children1);
-                groups.Add(children2);
+                // environment selection 
+                (JobSche sc1, JobSche sc2) = EnvironmentSelection(parent1, parent2, child1, child2);
+                groups.Add(sc1);
+                groups.Add(sc2);
             }
          
 
@@ -69,9 +90,9 @@ public class Evolution {
     }
     // ====================================================================================
     // Builder-Pattern
-    public delegate List<JobSche> MatingPoolDelegate(List<JobSche> groups, int take);
+    public delegate List<JobSche> MatingPoolDelegate(List<JobSche> groups);
     public delegate (JobSche, JobSche) CrossoverDelegate(JobSche parent1, JobSche parent2, SolverBase solver);
-    public delegate (JobSche, JobSche) EnvironmentSelectionDelegate(JobSche A, JobSche B, JobSche C,JobSche D);
+    public delegate (JobSche, JobSche) EnvironmentSelectionDelegate(JobSche parent1, JobSche parent2, JobSche childe2,JobSche child2);
     public delegate void MutationDelegate(JobSche sche);
     public class Builder {
         bool hasData = false;

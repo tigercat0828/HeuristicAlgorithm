@@ -2,7 +2,6 @@
 /// <summary>
 /// Simulated-Annealing
 /// </summary>
-/// <param name="data"></param>
 public class SolverSA : SolverBase {
 
     public readonly float Epsilon;
@@ -10,8 +9,7 @@ public class SolverSA : SolverBase {
     public readonly float Temperature;
     private float currentTemperature;
 
-
-    public SolverSA(int[][] data, float temperature, float epsilon, float theta) : base(data) {
+    public SolverSA(float temperature, float epsilon, float theta)  {
         // temp = temperature
         Temperature = temperature;
         currentTemperature = Temperature;
@@ -20,6 +18,7 @@ public class SolverSA : SolverBase {
     }
 
     public override JobSche Run(JobSche init = null) {
+        EnsureDataLoaded();
         JobSche solution = init ?? InitialSolution();
         JobSche best = solution;
         // cooling tactic
@@ -55,14 +54,6 @@ public class SolverSA : SolverBase {
         int makespan = Evaluate(order);
         JobSche neighbor = new(order, makespan);
         return neighbor;
-    }
-    public override JobSche RunMultiInstance(int instance) {
-        // not used...
-        throw new NotImplementedException();
-    }
-    protected override JobSche Select(List<JobSche> neighbors, JobSche localBest) {
-        // not used...
-        throw new NotImplementedException();
     }
 }
 

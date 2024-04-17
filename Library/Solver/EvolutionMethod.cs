@@ -1,9 +1,9 @@
 ﻿
 namespace Library.Solver;
-public static class EvoAlgo {
+public static class EvolutionMethod {
 
     #region Mating Pool 
-    public static List<JobSche> TopRatio(List<JobSche> groups, int take) {
+    public static List<JobSche> Ntournament(List<JobSche> groups, int take) {
         return groups.OrderBy(sche => sche.makespan).Take(take).ToList();
     }
     #endregion
@@ -20,7 +20,7 @@ public static class EvoAlgo {
     #endregion
 
     #region Crossover
-    public static (JobSche, JobSche) LinearCrossOver(JobSche parent1, JobSche parent2, SolverBase solver) {
+    public static (JobSche, JobSche) LinearOrderCrossOver(JobSche parent1, JobSche parent2, SolverBase solver) {
         int length = parent1.order.Length;
         int[] childOrder1 = new int[length];
         int[] childOrder2 = new int[length];
@@ -56,6 +56,15 @@ public static class EvoAlgo {
                 }
             }
         }
+    }
+    #endregion
+
+    #region Mutation
+    public static void EasySwap (JobSche entity) {
+        int jobs = entity.order.Length;
+        int a = EvoRandom.Next(jobs);
+        int b = EvoRandom.Next(jobs);
+        (entity.order[a], entity.order[b])= (entity.order[b], entity.order[a]);
     }
     #endregion
 

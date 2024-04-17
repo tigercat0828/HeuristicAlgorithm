@@ -1,4 +1,5 @@
 ﻿using ScottPlot;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Library.Solver;
 
@@ -7,30 +8,29 @@ namespace Library.Solver;
 /// </summary>
 public abstract class SolverBase {
 
-    public int[][] Data;
-    public readonly int JobNum;
-    public readonly int MachineNum;
-    public List<int> SpanList;
     protected static readonly Random random = new();
+    public int[][] Data;
+    public int JobNum { get; private set; }
+    public int MachineNum { get; private set; }
+    public List<int> SpanList { get; private set; }
     public JobSche Result { get; protected set; }
-    public SolverBase(int[][] data) {
+    public SolverBase() { }
+
+    /// <summary>
+    /// perform the solve problem procedure 
+    /// </summary>
+    public abstract JobSche Run(JobSche init = null!);
+    protected void EnsureDataLoaded() {
+        if (Data == null) {
+            throw new InvalidOperationException("Data is not loaded");
+        }
+    }
+    public void SetData(int[][] data) {
         Data = data;
         JobNum = data.Length;
         MachineNum = data.First().Length;
         SpanList = [];
     }
-    public SolverBase() {
-
-    }
-    public void SetData(int[][] data) {
-        Data = data;
-    }
-    /// <summary>
-    /// perform the solve problem procedure 
-    /// </summary>
-    public abstract JobSche Run(JobSche init = null!);
-    public abstract JobSche RunMultiInstance(int instance);
-    protected abstract JobSche Select(List<JobSche> neighbors, JobSche localBest);
 
     /// <summary>
     /// measure makespan of order
@@ -47,44 +47,8 @@ public abstract class SolverBase {
         }
         return machineTime[MachineNum - 1];
     }
-    public List<Bar> GetGhattBars(JobSche sche = null) {
-        if (sche is null) {
-            sche = Result;
-        }
-        List<Bar> bars = new(JobNum * MachineNum);
-        int[] machineTime = new int[MachineNum];
-        foreach (int job in sche.order) {
-            int currentTime = machineTime[0];
-            for (int mac = 0; mac < MachineNum; mac++) {
-                int start = Math.Max(machineTime[mac], currentTime);
-                currentTime = start + Data[job][mac];
-                machineTime[mac] = start + Data[job][mac];
-                bars.Add(new() {
-                    Position = mac + 1,
-                    ValueBase = start,
-                    Value = currentTime,
-                    FillColor = ScottPlot.Color.FromHex(Figure.ColorHex[job % Figure.ColorNum])
-                });
-            }
-        }
-        return bars;
-    }
-    public List<JobSche> Neighbors(JobSche sche) {
-        // swap all (i,j) 
-        List<JobSche> neighbors = [];
-        int[] order = sche.order;
+   
 
-        for (int i = 0; i < order.Length; i++) {
-            for (int j = i + 1; j < order.Length; j++) {
-                int[] temp = [.. order];
-                (temp[i], temp[j]) = (temp[j], temp[i]);
-
-                JobSche newSche = new(temp, Evaluate(temp));
-                neighbors.Add(newSche);
-            }
-        }
-        return neighbors;
-    }
     public JobSche InitialSolution() {
         int[] order = new int[JobNum];
         // Fisher-Yates Shuffle

@@ -1,5 +1,6 @@
 ﻿using Library;
 using Library.Solver;
+using System.Data.Common;
 
 string[] datasets = [
  "tai20_5_1.txt",
@@ -14,25 +15,19 @@ string[] datasets = [
 ];
 
 int[][] data = DataReader.LoadFile($"./Dataset/{datasets[0]}");
-//SolverBase solver = new SolverSA(data, 1000, 0.001f, 0.99f);
-//solver.CheckData();
-//solver.Run();
-//Console.WriteLine(solver.Result.ToString());
-//Figure figure = new("II", "iterations", "makespan");
-//figure.ScatterChart(Enumerable.Range(1, solver.SpanList.Count).ToList(), solver.SpanList);
-//figure.SaveFigure("./Output/convergence.png");
-
-ScheduleEvolutionTemp temp = new(
-    data,
-    100,
-    1000,
-    100,
-    new SolverSA(data, 1000, 0.001f, 0.99f));
 
 
-ScheduleEvolution evo = new ScheduleEvolution.Builder().WithData(data)
+Evolution evo = new Evolution.Builder().Configure("tai20_5_1", 10, 1000, 100, 0.001)
+                                                       .WithData(data)
+                                                       .SetMatingPoolMethod(EvolutionMethod.Ntournament)
+                                                       .SetParentSelectionMethod(EvolutionMethod.RandomSelect)
+                                                       .SetCrossoverMethod(EvolutionMethod.LinearOrderCrossOver)
+                                                       .SetMutationMethod(EvolutionMethod.EasySwap)
                                                        .SetSolver(new SolverII())
-                                                       .SetCrossoverMethod(EvoAlgo.LinearCrossOver)
-                                                       .SetMatingPoolMethod(EvoAlgo.TopRatio)
-                                                       .SetParentSelectionMethod(EvoAlgo.RandomSelect)
                                                        .Build();
+var result = evo.Run();
+Console.WriteLine(result);
+Figure figure = new("Gantt", "makespan", "machine #");
+
+figure.GanttChart(data, result);
+figure.SaveFigure("./Output/Gantt.png");

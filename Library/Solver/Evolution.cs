@@ -2,36 +2,32 @@
 using Library.Solver;
 
 
-public class ScheduleEvolution {
-    public delegate List<JobSche> MatingPoolDelegate(List<JobSche> groups, int take);
-    public delegate (JobSche, JobSche) ParentSelectionDelegate(List<JobSche> pool);
-    public delegate (JobSche, JobSche) CrossoverDelegate(JobSche parent1, JobSche parent2, SolverBase solver);
-    //public delegate (JobSche, JobSche) ChooseSubstitutionDelegate(JobSche A, JobSche B, JobSche C,JobSche D);
-    public delegate void MutationDelegate(JobSche sche);
+public class Evolution {
+
     // Configuration
+    public string ExpName { get; set; } 
     private int[][] m_Data;
     private int m_Generations;
     private int m_Population;
     private int m_PoolSize;
-    private float m_MutationRate;
-
-    List<JobSche> m_MatingPool = [];
+    private double m_MutationRate;
 
     private SolverBase m_Solver; // local search policy
-    public MatingPoolDelegate MatingPool { get; set; }
-    public ParentSelectionDelegate ParentSelection { get; set; }
-    public CrossoverDelegate Crossover { get; set; }
-    public MutationDelegate Mutation { get; set; }
+    private MatingPoolDelegate MatingPool { get; set; }
+    private ParentSelectionDelegate ParentSelection { get; set; }
+    private CrossoverDelegate Crossover { get; set; }
+    private MutationDelegate Mutation { get; set; }
 
     // Env Selection delegate
-    private ScheduleEvolution() { } // Make the constructor private
-    public JobSche Evolution() {
+    private Evolution() { } // Make the constructor private
+    public JobSche Run() {
         List<JobSche> groups = new(m_Population);
         for (int i = 0; i < m_Population; i++) {
             JobSche job = m_Solver.InitialSolution();
             groups.Add(job);
         }
         for (int i = 0; i < m_Generations; i++) {
+            Console.WriteLine($"Gen {i}");
             // mating pool
             List<JobSche> pool = MatingPool(groups, m_PoolSize);
 
@@ -47,11 +43,12 @@ public class ScheduleEvolution {
                 groups.Add(children2);
             }
             // mutation the current population
-            //for (int t = 0; t < groups.Count; t++) {
-            //    if(EvoRandom.Prob() < m_MutationRate) {
-            //        Mutation(groups[i]);
-            //    }
-            //}
+            for (int t = 0; t < groups.Count; t++) {
+                if (EvoRandom.Prob() < m_MutationRate) {
+                    Mutation(groups[i]);
+                    Console.WriteLine("Mutate!");
+                }
+            }
 
             // local-search    
             for (int sc = 0; sc < groups.Count; sc++) {
@@ -61,17 +58,24 @@ public class ScheduleEvolution {
         }
         return groups.MinBy(sche => sche.makespan)!;
     }
-
+    // ====================================================================================
+    // Builder-Pattern
+    public delegate List<JobSche> MatingPoolDelegate(List<JobSche> groups, int take);
+    public delegate (JobSche, JobSche) ParentSelectionDelegate(List<JobSche> pool);
+    public delegate (JobSche, JobSche) CrossoverDelegate(JobSche parent1, JobSche parent2, SolverBase solver);
+    //public delegate (JobSche, JobSche) ChooseSubstitutionDelegate(JobSche A, JobSche B, JobSche C,JobSche D);
+    public delegate void MutationDelegate(JobSche sche);
     public class Builder {
-        bool HasData = false;
-        private ScheduleEvolution _instance = new();
+        bool hasData = false;
+        private Evolution _instance = new();
 
         public Builder WithData(int[][] data) {
             _instance.m_Data = data;
-            HasData = true;
+            hasData = true;
             return this;
         }
-        public Builder Configure(int generations, int population, int poolSize, float mutationRate) {
+        public Builder Configure(string expName, int generations, int population, int poolSize, double mutationRate) {
+            _instance.ExpName = expName;
             _instance.m_Generations = generations;
             _instance.m_Population = population;
             _instance.m_PoolSize = poolSize;
@@ -79,7 +83,7 @@ public class ScheduleEvolution {
             return this;
         }
         public Builder SetSolver(SolverBase solver) {
-            if (!HasData) {
+            if (!hasData) {
                 throw new InvalidOperationException("should load data before set solver");
             }
             _instance.m_Solver = solver;
@@ -98,9 +102,12 @@ public class ScheduleEvolution {
             _instance.Crossover = crossover;
             return this;
         }
+        public Builder SetMutationMethod(MutationDelegate mutation) {
+            _instance.Mutation = mutation;
+            return this;
+        }
 
-        public ScheduleEvolution Build() {
-            // Optionally, validate the _instance before returning
+        public Evolution Build() {
             return _instance;
         }
     }

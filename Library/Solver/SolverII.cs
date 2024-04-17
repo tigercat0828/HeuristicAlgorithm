@@ -4,28 +4,55 @@
 /// Iterative-Improvement
 /// </summary>
 public class SolverII() : SolverBase() {
-
     /// <summary>
     /// II process
     /// </summary>
     public override JobSche Run(JobSche init = null) {
+        EnsureDataLoaded();
         int previousSpan = int.MaxValue;
-        JobSche s = init ?? InitialSolution();
-        while (s.makespan < previousSpan) {
+        JobSche solution = init ?? InitialSolution();
+        while (solution.makespan < previousSpan) {
 
-            previousSpan = s.makespan;
+            previousSpan = solution.makespan;
             SpanList.Add(previousSpan);
 
-            List<JobSche> neighbors = Neighbors(s);
-            s = Select(neighbors, s);
+            List<JobSche> neighbors = Neighbors(solution);
+            solution = Select(neighbors, solution);
         }
-        return s;
+        return solution;
     }
+    private List<JobSche> Neighbors(JobSche sche) {
+        // swap all (i,j) 
+        List<JobSche> neighbors = [];
+        int[] order = sche.order;
 
+        for (int i = 0; i < order.Length; i++) {
+            for (int j = i + 1; j < order.Length; j++) {
+                int[] temp = [.. order];
+                (temp[i], temp[j]) = (temp[j], temp[i]);
+
+                JobSche newSche = new(temp, Evaluate(temp));
+                neighbors.Add(newSche);
+            }
+        }
+        return neighbors;
+    }
+    /// <summary>
+    /// acceptance criteria : Best-improving
+    /// </summary>
+    private JobSche Select(List<JobSche> neighbors, JobSche localBest) {
+
+        foreach (var sche in neighbors) {
+            if (sche.makespan < localBest.makespan) {
+                localBest = sche;
+            }
+        }
+        return localBest;
+    }
     /// <summary>
     /// Run multiple II instance parallely
     /// </summary>
-    public override JobSche RunMultiInstance(int instance) {
+    public JobSche RunMultiInstance(int instance) {
         List<Func<JobSche, JobSche>> instances = new(instance);
         List<JobSche> locals = new(instance);
 
@@ -40,18 +67,4 @@ public class SolverII() : SolverBase() {
         Result = locals.MinBy(order => order.makespan)!;
         return Result;
     }
-
-    /// <summary>
-    /// acceptance criteria : Best-improving
-    /// </summary>
-    protected override JobSche Select(List<JobSche> neighbors, JobSche localBest) {
-
-        foreach (var sche in neighbors) {
-            if (sche.makespan < localBest.makespan) {
-                localBest = sche;
-            }
-        }
-        return localBest;
-    }
-
 }

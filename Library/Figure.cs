@@ -40,14 +40,7 @@ public class Figure {
         }
     }
 
-    /// <summary>
-    /// Plot a GanttChart
-    /// </summary>
-    /// <param name="bars">span of each single job</param>
-    /// <param name="instanceNum">machine num</param>
-    /// <returns></returns>
     public void GanttChart(IEnumerable<Bar> bars, int instanceNum) {
-
         var barPlot = Plot.Add.Bars(bars);
         barPlot.Horizontal = true;
 
@@ -57,10 +50,40 @@ public class Figure {
         Plot.Axes.Left.TickGenerator = ticks;
         Plot.Axes.SetLimitsY(bottom: instanceNum + 1, top: 0); // reverse the axis
     }
+
+    public void GanttChart(int[][] data, JobSche sche) {
+        int instanceNum = data.First().Length;
+        var bars = GetGhattBars(data, sche);
+        GanttChart(bars, instanceNum);
+    }
     /// <summary>
     /// save the figure into an image, only support .png file
     /// </summary>
     public void SaveFigure(string filename, int width = 1600, int height = 900) {
         Plot.SavePng(filename, width, height);
+    }
+    private static List<Bar> GetGhattBars(int[][] data, JobSche sche) {
+        if (data.Length != sche.order.Length) {
+            throw new Exception("Data and the order length not match");
+        }
+        int jobs = data.Length;
+        int machines = data.First().Length;
+        List<Bar> bars = new(jobs * machines);
+        int[] machineTime = new int[machines];
+        foreach (int job in sche.order) {
+            int currentTime = machineTime[0];
+            for (int mac = 0; mac < machines; mac++) {
+                int start = Math.Max(machineTime[mac], currentTime);
+                currentTime = start + data[job][mac];
+                machineTime[mac] = start + data[job][mac];
+                bars.Add(new() {
+                    Position = mac + 1,
+                    ValueBase = start,
+                    Value = currentTime,
+                    FillColor = ScottPlot.Color.FromHex(Figure.ColorHex[job % Figure.ColorNum])
+                });
+            }
+        }
+        return bars;
     }
 }

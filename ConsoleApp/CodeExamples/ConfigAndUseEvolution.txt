@@ -1,4 +1,4 @@
-﻿using Library;
+using Library;
 using Library.Solver;
 
 string[] datasets = [

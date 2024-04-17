@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-public class GeneticAlgorithm {
+﻿public class GeneticAlgorithm {
     private static Random random = new Random();
 
     // Function to perform Linear Order Crossover and produce two children

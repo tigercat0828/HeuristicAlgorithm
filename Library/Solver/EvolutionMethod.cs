@@ -60,8 +60,11 @@ public static class EvolutionMethod {
             double prob = minP / n + (maxP - minP) * (rank - 1) / n / (n - 1);
             probTable.Add(prob);
         }
-        Console.WriteLine(probTable.Sum());
-        // check sum =1;
+        // Console.WriteLine(probTable.Sum());
+        // check sum =1 and same different;
+        //for (int i = 0; i < probTable.Count-1; i++) {
+        //    Console.WriteLine(probTable[i+1]-probTable[i]);
+        //}
         List<JobSche> matingPool = [];
         for (int t = 0; t < n; t++) {
             double randomProb = EvoRandom.Prob();

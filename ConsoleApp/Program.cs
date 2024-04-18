@@ -20,7 +20,7 @@ int[][] data = DataReader.LoadFile($"./Dataset/{filename}");
 Evolution evo = new Evolution.Builder().Configure(filename, 1000, 1000, 0.001)
                                        .WithData(data)
                                        //.SetInitSolutions()                                               // IIinit
-                                       .SetMatingPoolMethod(EvolutionMethod.TruncationThreshold50)          // TruncationThreshold50|RouletteWheel|LinearRanking
+                                       .SetMatingPoolMethod(EvolutionMethod.RouletteWheel)          // TruncationThreshold50|RouletteWheel|LinearRanking
                                        .SetCrossoverMethod(EvolutionMethod.LinearOrderCrossOver)            // LOX
                                        .SetMutationMethod(EvolutionMethod.EasySwap)                         // EasySwap
                                        .SetEnvironmentSelection(EvolutionMethod.GenerationModel)            // GenerationModel|Mechanism_2_4

@@ -1,8 +1,9 @@
-﻿using Library.IO;
+﻿using Library.Configs;
+using Library.IO;
 using Library.Widgets;
 using System.Diagnostics;
 
-namespace Library.Solver;
+namespace Library.Solvers;
 public class Evolution {
 
     // Configuration
@@ -12,7 +13,7 @@ public class Evolution {
     private int m_Population;
     private double m_MutationRate;
     public JobSche Result { get; private set; }
-    public ExpLog m_LogFile { get; private set; }
+    public LogFile m_LogFile { get; private set; }
 
     private SolverBase m_Solver; // local search policy
     private MatingPoolDelegate MatingPool { get; set; }
@@ -26,20 +27,22 @@ public class Evolution {
 
         Stopwatch sw = new();
         sw.Start();
+
+        // Init Solution
         List<JobSche> groups = new(m_Population);
         for (int i = 0; i < m_Population; i++) {
             JobSche job = m_Solver.InitialSolution();
             groups.Add(job);
         }
         for (int sc = 0; sc < groups.Count; sc++) {
-            //Console.WriteLine($"processing {sc}");
+
             JobSche? sche = groups[sc];
             sche = m_Solver.Run(sche); // can apply SA or TS
         }
-
         Result = groups.MinBy(sche => sche.makespan)!;
 
-        Console.WriteLine($"Running ... {m_LogFile.GetExpName()}");
+        // Evolution Start
+        Console.Write($"{m_LogFile.GetExpName()}   ");
         using (var progress = new ProgressBar()) {
             for (int i = 0; i < m_Generations; i++) {
                 // mating pool
@@ -51,28 +54,27 @@ public class Evolution {
                     (JobSche child1, JobSche child2) = Crossover(parent1, parent2, m_Solver);
 
                     // mutation
-                    if (EvoRandom.Prob() < m_MutationRate) { Mutation(child1); /* Console.WriteLine("mutate");*/ }
-                    if (EvoRandom.Prob() < m_MutationRate) { Mutation(child2); /* Console.WriteLine("mutate");*/ }
+                    if (EvoRandom.Prob() < m_MutationRate)  Mutation(child1); 
+                    if (EvoRandom.Prob() < m_MutationRate)  Mutation(child2); 
 
                     // environment selection 
                     (JobSche sc1, JobSche sc2) = EnvironmentSelection(parent1, parent2, child1, child2);
                     groups.Add(sc1);
                     groups.Add(sc2);
                 }
-
                 // local-search    
                 for (int sc = 0; sc < groups.Count; sc++) {
-                    //Console.WriteLine($"processing {sc}");
                     JobSche? sche = groups[sc];
                     sche = m_Solver.Run(sche); // can apply SA or TS
                 }
 
                 int[] spans = groups.Select(sc => sc.makespan).ToArray();
+         
                 double mean = spans.Average();
                 double variance = spans.Sum(number => Math.Pow(number - mean, 2)) / spans.Length;
                 double deviation = Math.Sqrt(variance);
-                // Debug
-                Console.WriteLine($"Gen {i + 1,2} : μ = {mean:F2}, σ = {deviation:F2}");
+                
+                //Console.WriteLine($"Gen {i + 1, 2} : μ = {mean:F2}, σ = {deviation:F2}"); // Debug
                 m_LogFile.meanList.Add(Math.Round(mean, 2));
                 m_LogFile.DeviationList.Add(Math.Round(deviation, 2));
 
@@ -80,11 +82,11 @@ public class Evolution {
                 if (localBest.makespan < Result.makespan) {
                     Result = localBest;
                 }
-                //progress.Report((double)i / m_Generations);
+                progress.Report((double)i / m_Generations);
             }
         }
-        Console.WriteLine("Done.");
 
+        Console.WriteLine($"   ✅");
         sw.Stop();
         m_LogFile.Result = Result;
         m_LogFile.TimeCost = Math.Round(sw.Elapsed.TotalSeconds, 2);
@@ -127,6 +129,15 @@ public class Evolution {
             _instance.m_LogFile = new(filename, generations, population, mutationRate);
             return this;
         }
+        public Builder Configure(string filename, ParamConfig config) {
+            _instance.Dataset = filename;
+            _instance.m_Population = config.populations;
+            _instance.m_Generations = config.generations;
+            _instance.m_MutationRate = config.mutationRate;
+            _instance.m_LogFile = new(filename, config.generations, config.populations, config.mutationRate);
+            return this;
+        }
+
         public Builder SetSolver(SolverBase solver) {
             if (!hasData) {
                 throw new InvalidOperationException("should load data before set solver");

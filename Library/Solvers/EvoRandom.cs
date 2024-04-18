@@ -1,4 +1,4 @@
-﻿namespace Library.Solver;
+﻿namespace Library.Solvers;
 public static class EvoRandom {
     private readonly static Random random = new();
     public static int Next(int range) {

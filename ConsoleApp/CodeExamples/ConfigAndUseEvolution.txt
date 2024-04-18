@@ -1,5 +1,8 @@
-using Library;
+using Library.IO;
 using Library.Solver;
+using static Library.Solver.Evolution;
+using static Library.Solver.EvoMethod;
+using Config = (int, int, double);
 
 string[] datasets = [
  "tai20_5_1.txt",
@@ -13,20 +16,32 @@ string[] datasets = [
  "tai100_20_1.txt",
 ];
 
-int[][] data = DataReader.LoadFile($"./Dataset/{datasets[0]}");
 
 
-Evolution evo = new Evolution.Builder().Configure("tai20_5_1", 10, 1000, 100, 0.001)
-                                                       .WithData(data)
-                                                       .SetMatingPoolMethod(EvolutionMethod.Ntournament)
-                                                       .SetParentSelectionMethod(EvolutionMethod.RandomSelect)
-                                                       .SetCrossoverMethod(EvolutionMethod.LinearOrderCrossOver)
-                                                       .SetMutationMethod(EvolutionMethod.EasySwap)
-                                                       .SetSolver(new SolverII())
-                                                       .Build();
-var result = evo.Run();
-Console.WriteLine(result);
-Figure figure = new("Gantt", "makespan", "machine #");
+Config[] configs = [
+    // generaion, population, mutationRate
+    (1000,1000,0.001)
+];
+MatingPoolDelegate[] matingPoolMethods = [TruncationThreshold50, RouletteWheel, LinearRanking, ];
+EnvironmentSelectionDelegate[] environmentSelectionMethods = [GenerationModel, Mechanism_2_4];
 
-figure.GanttChart(data, result);
-figure.SaveFigure("./Output/Gantt.png");
+
+string filename;
+int[][] data;
+
+filename = datasets[8];      // <------ assign dataset here 
+data = DataReader.LoadFile($"./Dataset/{filename}");
+Evolution evo = new Evolution.Builder()
+    .Configure(filename, configs[0])
+    .WithData(data)
+    .SetMatingPoolMethod(EvoMethod.RouletteWheel)                       // TruncationThreshold50|RouletteWheel|LinearRanking
+    .SetCrossoverMethod(EvoMethod.LinearOrderCrossOver)                 // LOX
+    .SetMutationMethod(EvoMethod.EasySwap)                              // EasySwap
+    .SetEnvironmentSelection(EvoMethod.GenerationModel)                 // GenerationModel|Mechanism_2_4
+    .SetSolver(new SolverSA(22136, 1f, 0.999f))   // SA|II
+    .Build();
+
+evo.Run();
+Console.WriteLine(evo.Result);
+evo.SaveLog(1);
+

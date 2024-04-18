@@ -1,4 +1,4 @@
-﻿namespace Library.Solver;
+﻿namespace Library.Solvers;
 
 /// <summary>
 /// A abstract class host different heuristic method II, SA, TS, or RND

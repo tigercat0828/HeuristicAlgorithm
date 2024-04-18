@@ -1,4 +1,4 @@
-﻿namespace Library.Solver;
+﻿namespace Library.Solvers;
 
 /// <summary>
 /// Iterative-Improvement

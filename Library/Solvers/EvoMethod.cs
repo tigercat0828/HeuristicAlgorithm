@@ -1,5 +1,5 @@
-﻿namespace Library.Solver;
-public static class EvolutionMethod {
+﻿namespace Library.Solvers;
+public static class EvoMethod {
 
     #region Mating Pool 
     public static List<JobSche> TruncationThreshold50(List<JobSche> group) {
@@ -32,21 +32,27 @@ public static class EvolutionMethod {
     public static List<JobSche> RouletteWheel(List<JobSche> group) {
         int maxSpan = group.MaxBy(sc => sc.makespan)!.makespan;
         int[] spans = group.Select(sc => maxSpan - sc.makespan).ToArray();
+
         double total = spans.Sum();
-        List<double> probabilities = spans.Select(s => s / total).ToList();
+        if (total == 0) {
+            return new(group);
+        }
+
+        List<double> probTable = spans.Select(s => s / total).ToList();
 
         List<JobSche> matingPool = new(group.Count);
         for (int t = 0; t < group.Count; t++) {
             double prob = EvoRandom.Prob();
             double cumulativeProb = 0;
-            for (int i = 0; i < probabilities.Count; i++) {
-                cumulativeProb += probabilities[i];
+            for (int i = 0; i < probTable.Count; i++) {
+                cumulativeProb += probTable[i];
                 if (prob <= cumulativeProb) {
                     matingPool.Add(new JobSche(group[i]));
                     break;
                 }
             }
         }
+        
         return matingPool;
     }
     public static List<JobSche> LinearRanking(List<JobSche> groups) {
@@ -60,11 +66,9 @@ public static class EvolutionMethod {
             double prob = minP / n + (maxP - minP) * (rank - 1) / n / (n - 1);
             probTable.Add(prob);
         }
-        // Console.WriteLine(probTable.Sum());
-        // check sum =1 and same different;
-        //for (int i = 0; i < probTable.Count-1; i++) {
-        //    Console.WriteLine(probTable[i+1]-probTable[i]);
-        //}
+        // Debug : check sum =1 and same different and prob diff is same;
+        // Console.WriteLine(probTable.Sum()); for (int i = 0; i < probTable.Count-1; i++) Console.WriteLine(probTable[i+1]-probTable[i]);
+
         List<JobSche> matingPool = [];
         for (int t = 0; t < n; t++) {
             double randomProb = EvoRandom.Prob();

@@ -1,4 +1,4 @@
-﻿using Library.Solver;
+﻿using Library.Solvers;
 using ScottPlot;
 using ScottPlot.TickGenerators;
 

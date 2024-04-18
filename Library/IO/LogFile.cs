@@ -1,9 +1,9 @@
-﻿using Library.Solver;
+﻿using Library.Solvers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 namespace Library.IO;
-public class ExpLog {
-    public ExpLog(string datasetName, int generation, int population, double mutationRate) {
+public class LogFile {
+    public LogFile(string datasetName, int generation, int population, double mutationRate) {
         DatasetName = datasetName;
         Generation = generation;
         Population = population;
@@ -29,7 +29,7 @@ public class ExpLog {
     public double TimeCost;
 
     public string GetExpName() {
-        return $"[{DatasetName}][{Generation},{Population},{MutationRate}][{MatingPoolMethod}][{EnvironmentMethod}]";
+        return $"[{DatasetName}][{Generation},{Population},{MutationRate:F3}][{MatingPoolMethod}][{EnvironmentMethod}]";
     }
     private static readonly JsonSerializerOptions options = new() {
         WriteIndented = true,

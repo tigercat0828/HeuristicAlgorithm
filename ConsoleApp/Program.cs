@@ -16,16 +16,16 @@ string[] datasets = [
 ];
 Stopwatch sw = new();
 
-string filename = datasets[0];      // <------ assign dataset here 
+string filename = datasets[8];      // <------ assign dataset here 
 int[][] data = DataReader.LoadFile($"./Dataset/{filename}");
-Evolution evo = new Evolution.Builder().Configure(filename, 30, 100, 0.001)
+Evolution evo = new Evolution.Builder().Configure(filename, 1000, 1000, 0.001)
                                        .WithData(data)
                                         //.SetInitSolutions()                                               // IIinit
                                        .SetMatingPoolMethod(EvolutionMethod.TruncationThreshold50)          // TruncationThreshold50|RouletteWheel|LinearRanking
                                        .SetCrossoverMethod(EvolutionMethod.LinearOrderCrossOver)            // LOX
                                        .SetMutationMethod(EvolutionMethod.EasySwap)                         // EasySwap
                                        .SetEnvironmentSelection(EvolutionMethod.GenerationModel)            // GenerationModel|Mechanism_2_4
-                                       .SetSolver(new SolverII())   // II  
+                                       //.SetSolver(new SolverII())   // II  
                                        .SetSolver(new SolverSA(100,0.001f,0.985f))   // SA   
                                        .Build();
 

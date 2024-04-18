@@ -1,4 +1,5 @@
 ﻿using Library.Solver;
+using Library.Widgets;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -39,45 +40,53 @@ public class Evolution {
         }
 
         Result = groups.MinBy(sche => sche.makespan)!;
-        for (int i = 0; i < m_Generations; i++) {
-            // mating pool
-            List<JobSche> pool = MatingPool(groups);
-            groups.Clear();
-            for (int t = 0; t < pool.Count; t+=2) {
-                var parent1 = pool[t];
-                var parent2 = pool[t+1];
-                (JobSche child1, JobSche child2) = Crossover(parent1, parent2, m_Solver);
+        
+        Console.WriteLine($"Running ... {m_LogFile.GetExpName()}");
+        using (var progress = new ProgressBar()) {
+            for (int i = 0; i < m_Generations; i++) {
+                // mating pool
+                List<JobSche> pool = MatingPool(groups);
+                groups.Clear();
+                for (int t = 0; t < pool.Count; t+=2) {
+                    var parent1 = pool[t];
+                    var parent2 = pool[t+1];
+                    (JobSche child1, JobSche child2) = Crossover(parent1, parent2, m_Solver);
 
-                // mutation
-                if (EvoRandom.Prob() < m_MutationRate) { Mutation(child1); /* Console.WriteLine("mutate");*/ }
-                if (EvoRandom.Prob() < m_MutationRate) { Mutation(child2); /* Console.WriteLine("mutate");*/ }
+                    // mutation
+                    if (EvoRandom.Prob() < m_MutationRate) { Mutation(child1); /* Console.WriteLine("mutate");*/ }
+                    if (EvoRandom.Prob() < m_MutationRate) { Mutation(child2); /* Console.WriteLine("mutate");*/ }
 
-                // environment selection 
-                (JobSche sc1, JobSche sc2) = EnvironmentSelection(parent1, parent2, child1, child2);
-                groups.Add(sc1);
-                groups.Add(sc2);
-            }
+                    // environment selection 
+                    (JobSche sc1, JobSche sc2) = EnvironmentSelection(parent1, parent2, child1, child2);
+                    groups.Add(sc1);
+                    groups.Add(sc2);
+                }
 
-            // local-search    
-            for (int sc = 0; sc < groups.Count; sc++) {
-                //Console.WriteLine($"processing {sc}");
-                JobSche? sche = groups[sc];
-                sche = m_Solver.Run(sche); // can apply SA or TS
-            }
+                // local-search    
+                for (int sc = 0; sc < groups.Count; sc++) {
+                    //Console.WriteLine($"processing {sc}");
+                    JobSche? sche = groups[sc];
+                    sche = m_Solver.Run(sche); // can apply SA or TS
+                }
 
-            int[] spans = groups.Select(sc => sc.makespan).ToArray();
-            double mean = spans.Average();
-            double variance = spans.Sum(number => Math.Pow(number - mean, 2)) / spans.Length;
-            double deviation = Math.Sqrt(variance);
-            Console.WriteLine($"Gen {i+1,2} : μ = {mean:F2}, σ = {deviation:F2}");
-            m_LogFile.meanList.Add(Math.Round(mean, 2));
-            m_LogFile.DeviationList.Add(Math.Round(deviation, 2));
+                int[] spans = groups.Select(sc => sc.makespan).ToArray();
+                double mean = spans.Average();
+                double variance = spans.Sum(number => Math.Pow(number - mean, 2)) / spans.Length;
+                double deviation = Math.Sqrt(variance);
+                // Debug
+                Console.WriteLine($"Gen {i+1,2} : μ = {mean:F2}, σ = {deviation:F2}");
+                m_LogFile.meanList.Add(Math.Round(mean, 2));
+                m_LogFile.DeviationList.Add(Math.Round(deviation, 2));
 
-            var localBest = groups.MinBy(sche => sche.makespan)!;
-            if(localBest.makespan < Result.makespan) {
-                Result = localBest;
+                var localBest = groups.MinBy(sche => sche.makespan)!;
+                if (localBest.makespan < Result.makespan) {
+                    Result = localBest;
+                }
+                //progress.Report((double)i / m_Generations);
             }
         }
+        Console.WriteLine("Done.");
+
         sw.Stop();
         m_LogFile.Result = Result;
         m_LogFile.TimeCost = Math.Round(sw.Elapsed.TotalSeconds,2);

@@ -1,6 +1,6 @@
 ﻿
 
-namespace Library.Widgets; 
+namespace Library.Widgets;
 using System;
 using System.Text;
 using System.Threading;

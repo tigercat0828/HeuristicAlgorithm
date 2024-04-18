@@ -1,4 +1,4 @@
-﻿namespace Library;
+﻿namespace Library.IO;
 public static class DataReader {
     public static int[][] LoadFile(string filename) {
         string[] lines = File.ReadAllLines(filename);

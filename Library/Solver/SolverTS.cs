@@ -1,5 +1,4 @@
-﻿
-namespace Library.Solver;
+﻿namespace Library.Solver;
 /// <summary>
 /// Tabu-Search
 /// </summary>

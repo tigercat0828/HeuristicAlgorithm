@@ -1,10 +1,8 @@
-﻿using Library.Solver;
+﻿using Library.IO;
 using Library.Widgets;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Library; 
+namespace Library.Solver;
 public class Evolution {
 
     // Configuration
@@ -40,16 +38,16 @@ public class Evolution {
         }
 
         Result = groups.MinBy(sche => sche.makespan)!;
-        
+
         Console.WriteLine($"Running ... {m_LogFile.GetExpName()}");
         using (var progress = new ProgressBar()) {
             for (int i = 0; i < m_Generations; i++) {
                 // mating pool
                 List<JobSche> pool = MatingPool(groups);
                 groups.Clear();
-                for (int t = 0; t < pool.Count; t+=2) {
+                for (int t = 0; t < pool.Count; t += 2) {
                     var parent1 = pool[t];
-                    var parent2 = pool[t+1];
+                    var parent2 = pool[t + 1];
                     (JobSche child1, JobSche child2) = Crossover(parent1, parent2, m_Solver);
 
                     // mutation
@@ -74,7 +72,7 @@ public class Evolution {
                 double variance = spans.Sum(number => Math.Pow(number - mean, 2)) / spans.Length;
                 double deviation = Math.Sqrt(variance);
                 // Debug
-                Console.WriteLine($"Gen {i+1,2} : μ = {mean:F2}, σ = {deviation:F2}");
+                Console.WriteLine($"Gen {i + 1,2} : μ = {mean:F2}, σ = {deviation:F2}");
                 m_LogFile.meanList.Add(Math.Round(mean, 2));
                 m_LogFile.DeviationList.Add(Math.Round(deviation, 2));
 
@@ -89,7 +87,7 @@ public class Evolution {
 
         sw.Stop();
         m_LogFile.Result = Result;
-        m_LogFile.TimeCost = Math.Round(sw.Elapsed.TotalSeconds,2);
+        m_LogFile.TimeCost = Math.Round(sw.Elapsed.TotalSeconds, 2);
         return Result;
     }
 

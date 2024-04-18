@@ -1,4 +1,4 @@
-﻿namespace Library;
+﻿namespace Library.Solver;
 
 /// <summary>
 /// Solution Entity

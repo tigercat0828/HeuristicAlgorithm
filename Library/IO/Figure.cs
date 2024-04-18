@@ -1,7 +1,8 @@
-﻿using ScottPlot;
+﻿using Library.Solver;
+using ScottPlot;
 using ScottPlot.TickGenerators;
 
-namespace Library;
+namespace Library.IO;
 /// <summary>
 /// A class for making figure
 /// </summary>
@@ -80,7 +81,7 @@ public class Figure {
                     Position = mac + 1,
                     ValueBase = start,
                     Value = currentTime,
-                    FillColor = ScottPlot.Color.FromHex(Figure.ColorHex[job % Figure.ColorNum])
+                    FillColor = Color.FromHex(ColorHex[job % ColorNum])
                 });
             }
         }

@@ -1,13 +1,9 @@
-﻿using Library.Solver;
-using System.Net;
-using System.Transactions;
-
-namespace Library;
+﻿namespace Library.Solver;
 public static class EvolutionMethod {
 
     #region Mating Pool 
     public static List<JobSche> TruncationThreshold50(List<JobSche> group) {
-        var selected =  group.OrderBy(sche => sche.makespan).Take(group.Count/2).ToArray();
+        var selected = group.OrderBy(sche => sche.makespan).Take(group.Count / 2).ToArray();
         var repeat = RepeatElementsTwice(selected);
         ShuffleArray(repeat);
         return [.. repeat];
@@ -28,13 +24,13 @@ public static class EvolutionMethod {
 
             for (int i = array.Length - 1; i > 0; i--) {
                 int j = EvoRandom.Next(0, i + 1);
-                (array[j], array[i])=(array[i], array[j]);
+                (array[j], array[i]) = (array[i], array[j]);
             }
         }
 
     }
     public static List<JobSche> RouletteWheel(List<JobSche> group) {
-        int maxSpan = group.MaxBy(sc=>sc.makespan)!.makespan;
+        int maxSpan = group.MaxBy(sc => sc.makespan)!.makespan;
         int[] spans = group.Select(sc => maxSpan - sc.makespan).ToArray();
         double total = spans.Sum();
         List<double> probabilities = spans.Select(s => s / total).ToList();
@@ -56,13 +52,13 @@ public static class EvolutionMethod {
     public static List<JobSche> LinearRanking(List<JobSche> groups) {
         double minP = 0.0;
         double maxP = 2.0;
-        var sorted =  groups.OrderByDescending(sc => sc.makespan).ToList();
+        var sorted = groups.OrderByDescending(sc => sc.makespan).ToList();
         int n = sorted.Count;
         List<double> probTable = [];
         for (int i = 0; i < n; i++) {
-            int rank = i+1;
-            double prob = minP/n+(maxP-minP)*(rank-1)/n/(n-1);        
-            probTable.Add(prob); 
+            int rank = i + 1;
+            double prob = minP / n + (maxP - minP) * (rank - 1) / n / (n - 1);
+            probTable.Add(prob);
         }
         Console.WriteLine(probTable.Sum());
         // check sum =1;
@@ -138,15 +134,15 @@ public static class EvolutionMethod {
     /// just return children
     /// </summary>
     public static (JobSche, JobSche) GenerationModel(JobSche parent1, JobSche parent2, JobSche child1, JobSche child2) {
-    
+
         return (child1, child2);
     }
-    
+
     /// <summary>
     /// 2 parents, 2 children, pick best 2 entity
     /// </summary>
     public static (JobSche, JobSche) Mechanism_2_4(JobSche parent1, JobSche parent2, JobSche child1, JobSche child2) {
-       
+
         // Compare the first two and second two numbers
         var (low1, high1) = parent1.makespan < parent2.makespan ? (parent1, parent2) : (parent2, parent1);
         var (low2, high2) = child1.makespan < child2.makespan ? (child1, child2) : (child2, child1);

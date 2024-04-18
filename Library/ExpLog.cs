@@ -37,11 +37,11 @@ public class ExpLog {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
     };
  
-    public void SaveLog() {
+    public void SaveLog(int epoch) {
         // will be the ouput filename like [tai_20_5][...].json
         string filename = GetExpName();
         string jsonString = JsonSerializer.Serialize(this, options);
-        File.WriteAllText($"Output/{filename}.json", jsonString);
+        File.WriteAllText($"Output/{filename}_{epoch}.json", jsonString);
         return;
     }
 

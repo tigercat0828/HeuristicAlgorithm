@@ -8,7 +8,6 @@ public class Evolution {
 
     // Configuration
     public string Dataset { get; private set; }
-    public string ExpName { get; private set; }
     private int[][] m_Data;
     private int m_Generations;
     private int m_Population;
@@ -33,6 +32,12 @@ public class Evolution {
             JobSche job = m_Solver.InitialSolution();
             groups.Add(job);
         }
+        for (int sc = 0; sc < groups.Count; sc++) {
+            //Console.WriteLine($"processing {sc}");
+            JobSche? sche = groups[sc];
+            sche = m_Solver.Run(sche); // can apply SA or TS
+        }
+
         Result = groups.MinBy(sche => sche.makespan)!;
         for (int i = 0; i < m_Generations; i++) {
             // mating pool
@@ -79,13 +84,16 @@ public class Evolution {
         return Result;
     }
 
-    public void SaveLog() {
-        m_LogFile.SaveLog();
+    public void SaveLog(int epoch) {
+        if (!Directory.Exists("./Output")) {
+            Directory.CreateDirectory("./Output");
+        }
+        m_LogFile.SaveLog(epoch);
 
         string expname = m_LogFile.GetExpName();
         Figure figure = new("Gantt", "makespan", "machine #");
         figure.GanttChart(m_Data, Result);
-        figure.SaveFigure($"./Output/{expname}.png");
+        figure.SaveFigure($"./Output/{expname}_{epoch}.png");
     }
 
 

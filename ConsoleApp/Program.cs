@@ -31,5 +31,5 @@ Evolution evo = new Evolution.Builder().Configure(filename, 30, 100, 0.001)
 
 evo.Run();
 Console.WriteLine(evo.Result);
-evo.SaveLog();
+evo.SaveLog(1);
 

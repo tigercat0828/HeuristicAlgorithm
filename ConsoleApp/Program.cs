@@ -3,7 +3,10 @@ using Library.Solvers;
 using Library.IO;
 using static Library.Solvers.Evolution;
 using static Library.Solvers.EvoMethod;
+using System.Diagnostics;
 Console.OutputEncoding = System.Text.Encoding.UTF8;
+//EntireLog entirelog = new(datasets);
+
 
 // Experienment Parameters
 const int EPOCH = 20;
@@ -19,25 +22,24 @@ List<string> datasets = [
  "tai100_20_1.txt",
 ];
 
-// generaion, population, mutationRate
+// generation, population, mutationRate
 ParamConfig[] paramConfigs = [
     new(700,100,0.001f)
 ];
 MatingPoolDelegate[] matingPoolMethods = [TruncationThreshold50, RouletteWheel, LinearRanking,];
 EnvironmentSelectionDelegate[] envSelectionMethods = [GenerationModel, Mechanism_2_4];
 
-
-//EntireLog entirelog = new(datasets);
-
 var expConfigs = BuildAllExpConfigs();
 
-// RUN_DEBUG_EXP();
-
+Stopwatch sw = new();
+sw.Start();
 RUN_ALL_EXPS_SIGNLE_THREAD(expConfigs);
 
 // Console output will be a mess LOL. may use GUI to improve :)
 // RUN_ALL_EXPS_MULTI_THREAD(expConfigs);
-
+// RUN_DEBUG_EXP();
+sw.Stop();
+Console.WriteLine($"All time cost : {sw.Elapsed.TotalSeconds}");
 AskOpenOutputFolder();
 
 

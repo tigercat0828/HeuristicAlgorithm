@@ -1,21 +1,35 @@
-﻿using System;
+﻿using Library;
+using Library.Solver;
+using System.Diagnostics;
+using System.Text.Json;
 
-public class ConsoleClearExample {
-    public static void Main() {
-        for (int i = 0; i < 100; i++) {
-            Console.WriteLine("generation: " + i);
+string[] datasets = [
+ "tai20_5_1.txt",
+ "tai20_10_1.txt",
+ "tai20_20_1.txt",
+ "tai50_5_1.txt",
+ "tai50_10_1.txt",
+ "tai50_20_1.txt",
+ "tai100_5_1.txt",
+ "tai100_10_1.txt",
+ "tai100_20_1.txt",
+];
+Stopwatch sw = new();
 
-            for (int j = 0; j < 50; j++) {
-                Console.WriteLine("processing: " + j);
-                ClearCurrentConsoleLine();
-            }
-        }
-    }
+string filename = datasets[0];      // <------ assign dataset here 
+int[][] data = DataReader.LoadFile($"./Dataset/{filename}");
+Evolution evo = new Evolution.Builder().Configure(filename, 30, 100, 0.001)
+                                       .WithData(data)
+                                        //.SetInitSolutions()                                               // IIinit
+                                       .SetMatingPoolMethod(EvolutionMethod.TruncationThreshold50)          // TruncationThreshold50|RouletteWheel|LinearRanking
+                                       .SetCrossoverMethod(EvolutionMethod.LinearOrderCrossOver)            // LOX
+                                       .SetMutationMethod(EvolutionMethod.EasySwap)                         // EasySwap
+                                       .SetEnvironmentSelection(EvolutionMethod.GenerationModel)            // GenerationModel|Mechanism_2_4
+                                       .SetSolver(new SolverII())   // II  
+                                       .SetSolver(new SolverSA(100,0.001f,0.985f))   // SA   
+                                       .Build();
 
-    public static void ClearCurrentConsoleLine() {
-        int currentLineCursor = Console.CursorTop;
-        Console.SetCursorPosition(0, Console.CursorTop);
-        Console.Write(new string(' ', Console.WindowWidth));
-        Console.SetCursorPosition(0, currentLineCursor);
-    }
-}
+evo.Run();
+Console.WriteLine(evo.Result);
+evo.SaveLog();
+

@@ -1,0 +1,30 @@
+using Library;
+using Library.Solver;
+
+string[] datasets = [
+ "tai20_5_1.txt",
+ "tai20_10_1.txt",
+ "tai20_20_1.txt",
+ "tai50_5_1.txt",
+ "tai50_10_1.txt",
+ "tai50_20_1.txt",
+ "tai100_5_1.txt",
+ "tai100_10_1.txt",
+ "tai100_20_1.txt",
+];
+
+int[][] data = DataReader.LoadFile($"./Dataset/{datasets[0]}");
+SolverBase solver = new SolverSA(1000, 0.001f, 0.99f);
+solver.SetData( data );
+solver.CheckData();
+solver.Run();
+Console.WriteLine(solver.Result.ToString());
+Figure spans = new("II", "iterations", "makespan");
+spans.ScatterChart(Enumerable.Range(1, solver.SpanList.Count).ToList(), solver.SpanList);
+spans.SaveFigure("./Output/convergence.png");
+
+
+Figure gantt = new("Gantt", "makespan", "machine #");
+var bars = Figure.GetGhattBars(data, solver.Result);
+gantt.GanttChart(bars, solver.MachineNum);
+gantt.SaveFigure("./Output/gantt.png");

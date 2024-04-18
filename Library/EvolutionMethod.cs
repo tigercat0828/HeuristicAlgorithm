@@ -6,34 +6,81 @@ namespace Library;
 public static class EvolutionMethod {
 
     #region Mating Pool 
-    public static List<JobSche> Truncation(List<JobSche> group) {
-        return group.OrderBy(sche => sche.makespan).Take(group.Count/2).ToList();
+    public static List<JobSche> TruncationThreshold50(List<JobSche> group) {
+        var selected =  group.OrderBy(sche => sche.makespan).Take(group.Count/2).ToArray();
+        var repeat = RepeatElementsTwice(selected);
+        ShuffleArray(repeat);
+        return [.. repeat];
+
+        static JobSche[] RepeatElementsTwice(JobSche[] origin) {
+            JobSche[] repeatedArray = new JobSche[origin.Length * 2];
+            int index = 0;
+
+            foreach (var item in origin) {
+                repeatedArray[index++] = item;
+                repeatedArray[index++] = item;
+            }
+
+            return repeatedArray;
+        }
+
+        static void ShuffleArray(JobSche[] array) {
+
+            for (int i = array.Length - 1; i > 0; i--) {
+                int j = EvoRandom.Next(0, i + 1);
+                (array[j], array[i])=(array[i], array[j]);
+            }
+        }
+
     }
     public static List<JobSche> RouletteWheel(List<JobSche> group) {
-        List<JobSche> newGroup = new(group.Count);
         int maxSpan = group.MaxBy(sc=>sc.makespan)!.makespan;
         int[] spans = group.Select(sc => maxSpan - sc.makespan).ToArray();
-        
         double total = spans.Sum();
         List<double> probabilities = spans.Select(s => s / total).ToList();
 
+        List<JobSche> matingPool = new(group.Count);
         for (int t = 0; t < group.Count; t++) {
             double prob = EvoRandom.Prob();
             double cumulativeProb = 0;
             for (int i = 0; i < probabilities.Count; i++) {
                 cumulativeProb += probabilities[i];
                 if (prob <= cumulativeProb) {
-                    newGroup.Add(new JobSche(group[i]));
+                    matingPool.Add(new JobSche(group[i]));
                     break;
                 }
             }
         }
-        return newGroup;
+        return matingPool;
     }
-    public static List<JobSche> LinearRanking(List<JobSche> groups, int take) {
-        throw new NotImplementedException();
+    public static List<JobSche> LinearRanking(List<JobSche> groups) {
+        double minP = 0.0;
+        double maxP = 2.0;
+        var sorted =  groups.OrderByDescending(sc => sc.makespan).ToList();
+        int n = sorted.Count;
+        List<double> probTable = [];
+        for (int i = 0; i < n; i++) {
+            int rank = i+1;
+            double prob = minP/n+(maxP-minP)*(rank-1)/n/(n-1);        
+            probTable.Add(prob); 
+        }
+        Console.WriteLine(probTable.Sum());
+        // check sum =1;
+        List<JobSche> matingPool = [];
+        for (int t = 0; t < n; t++) {
+            double randomProb = EvoRandom.Prob();
+            double cumulativeProb = 0;
+            for (int i = 0; i < n; i++) {
+                cumulativeProb += probTable[i];
+                if (randomProb <= cumulativeProb) {
+                    matingPool.Add(new JobSche(groups[i]));
+                    break;
+                }
+            }
+        }
+        return matingPool;
     }
-    
+
     #endregion
 
     #region Crossover

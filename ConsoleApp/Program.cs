@@ -1,5 +1,7 @@
 ﻿using Library;
 using Library.Solver;
+using System.Diagnostics;
+using System.Text.Json;
 
 string[] datasets = [
  "tai20_5_1.txt",
@@ -12,23 +14,22 @@ string[] datasets = [
  "tai100_10_1.txt",
  "tai100_20_1.txt",
 ];
+Stopwatch sw = new();
 
-int[][] data = DataReader.LoadFile($"./Dataset/{datasets[0]}");
-
-Evolution evo = new Evolution.Builder().Configure("tai100_20_1", 30, 12, 4, 0.001)
+string filename = datasets[0];      // <------ assign dataset here 
+int[][] data = DataReader.LoadFile($"./Dataset/{filename}");
+Evolution evo = new Evolution.Builder().Configure(filename, 30, 100, 0.001)
                                        .WithData(data)
                                         //.SetInitSolutions()                                               // IIinit
-                                       .SetMatingPoolMethod(EvolutionMethod.Truncation)                     // Truncation|RouletteWheel|LinearRanking|ExponentialRanking
+                                       .SetMatingPoolMethod(EvolutionMethod.TruncationThreshold50)          // TruncationThreshold50|RouletteWheel|LinearRanking
                                        .SetCrossoverMethod(EvolutionMethod.LinearOrderCrossOver)            // LOX
                                        .SetMutationMethod(EvolutionMethod.EasySwap)                         // EasySwap
-                                       .SetEnvironmentSelection(EvolutionMethod.GenerationModel)            // generational model|2/4mechanism
+                                       .SetEnvironmentSelection(EvolutionMethod.GenerationModel)            // GenerationModel|Mechanism_2_4
+                                       .SetSolver(new SolverII())   // II  
                                        .SetSolver(new SolverSA(100,0.001f,0.985f))   // SA   
-                                       //.SetSolver(new SolverII())   // II  
                                        .Build();
-var result = evo.Run();
-Console.WriteLine(result);
-Figure figure = new("Gantt", "makespan", "machine #");
 
-figure.GanttChart(data, result);
-figure.SaveFigure("./Output/Gantt.png");
+evo.Run();
+Console.WriteLine(evo.Result);
+evo.SaveLog();
 

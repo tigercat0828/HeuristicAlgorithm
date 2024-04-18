@@ -1,9 +1,9 @@
 ﻿using Library.Configs;
-using Library.Solvers;
 using Library.IO;
+using Library.Solvers;
+using System.Diagnostics;
 using static Library.Solvers.Evolution;
 using static Library.Solvers.EvoMethod;
-using System.Diagnostics;
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 //EntireLog entirelog = new(datasets);
 
@@ -33,11 +33,11 @@ var expConfigs = BuildAllExpConfigs();
 
 Stopwatch sw = new();
 sw.Start();
-RUN_ALL_EXPS_SIGNLE_THREAD(expConfigs);
 
-// Console output will be a mess LOL. may use GUI to improve :)
-// RUN_ALL_EXPS_MULTI_THREAD(expConfigs);
+RUN_ALL_EXPS_SIGNLE_THREAD(expConfigs);
+// RUN_ALL_EXPS_MULTI_THREAD(expConfigs);   // Console output will be a mess LOL. may use GUI to improve :)
 // RUN_DEBUG_EXP();
+
 sw.Stop();
 Console.WriteLine($"All time cost : {sw.Elapsed.TotalSeconds}");
 AskOpenOutputFolder();
@@ -50,7 +50,7 @@ void RUN_ALL_EXPS_SIGNLE_THREAD(List<ExperimentConfig> expConfigs) {
     }
 }
 void RUN_ALL_EXPS_MULTI_THREAD(List<ExperimentConfig> expConfigs) {
-    
+
     List<Task> tasks = [];
     foreach (var expConfig in expConfigs) {
         tasks.Add(Task.Run(() => RunExperiment(expConfig, EPOCH)));

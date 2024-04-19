@@ -6,7 +6,7 @@
 public abstract class SolverBase {
 
     protected static readonly Random random = new();
-    public int[][] Data;
+    public int[][] Data {get; private set;}
     public int JobNum { get; private set; }
     public int MachineNum { get; private set; }
     public List<int> SpanList { get; private set; }
@@ -18,7 +18,7 @@ public abstract class SolverBase {
     /// </summary>
     public abstract JobSche Run(JobSche init = null!);
     protected void EnsureDataLoaded() {
-        if (Data == null) {
+        if (Data is null) {
             throw new InvalidOperationException("Data is not loaded");
         }
     }
@@ -60,10 +60,5 @@ public abstract class SolverBase {
         };
         return sche;
     }
-    public void CheckData() {
-        Console.WriteLine($"jobs: {JobNum} machines: {MachineNum}");
-        for (int i = 0; i < Data.Length; i++) {
-            Console.WriteLine($"{i + 1}, [{string.Join(", ", Data[i])}]");
-        }
-    }
+  
 }

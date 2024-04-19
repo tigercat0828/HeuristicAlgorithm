@@ -17,7 +17,7 @@ public class SolverSA : SolverBase {
         Theta = theta;
     }
 
-    public override JobSche Run(JobSche init = null) {
+    public override JobSche Run(JobSche init = null!) {
         EnsureDataLoaded();
         JobSche solution = init ?? InitialSolution();
         JobSche best = solution;
@@ -36,11 +36,10 @@ public class SolverSA : SolverBase {
             SpanList.Add(solution.makespan);
             currentTemperature *= Theta;   // geometry cooldown
             if (solution.makespan <= best.makespan) {
-                best = solution;
+                best = new(solution);
             }
         }
-        //Result = best;
-        Result = solution;
+        Result = best;
         return Result;
     }
     /// <summary>

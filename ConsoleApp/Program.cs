@@ -9,6 +9,7 @@ Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 
 // Experienment Parameters
+// ===============================================
 const int EPOCH = 20;
 List<string> datasets = [
  "tai20_5_1.txt",
@@ -22,29 +23,32 @@ List<string> datasets = [
  "tai100_20_1.txt",
 ];
 
-// generation, population, mutationRate
 ParamConfig[] paramConfigs = [
-    new(700,100,0.001f)
+    new(100,100,0.001f)     // generation, population, mutationRate
 ];
 MatingPoolDelegate[] matingPoolMethods = [TruncationThreshold50, RouletteWheel, LinearRanking,];
 EnvironmentSelectionDelegate[] envSelectionMethods = [GenerationModel, Mechanism_2_4];
+
+// Main Program
+// ===============================================================
 
 var expConfigs = BuildAllExpConfigs();
 
 Stopwatch sw = new();
 sw.Start();
 
-RUN_ALL_EXPS_SIGNLE_THREAD(expConfigs);
-// RUN_ALL_EXPS_MULTI_THREAD(expConfigs);   // Console output will be a mess LOL. may use GUI to improve :)
-// RUN_DEBUG_EXP();
+RUN_DEBUG_EXP(8);
+//RUN_ALL_EXPS_SINGLE_THREAD(expConfigs);
+//RUN_ALL_EXPS_MULTI_THREAD(expConfigs);   // Console output will be a mess LOL. may use GUI to improve :)
 
 sw.Stop();
 Console.WriteLine($"All time cost : {sw.Elapsed.TotalSeconds}");
 AskOpenOutputFolder();
 
 
-// Function Area =============================================================
-void RUN_ALL_EXPS_SIGNLE_THREAD(List<ExperimentConfig> expConfigs) {
+// Function Area
+// =============================================================
+void RUN_ALL_EXPS_SINGLE_THREAD(List<ExperimentConfig> expConfigs) {
     foreach (var expConfig in expConfigs) {
         RunExperiment(expConfig, EPOCH);
     }
@@ -72,17 +76,17 @@ List<ExperimentConfig> BuildAllExpConfigs() {
     }
     return experimentConfigs;
 }
-void RUN_DEBUG_EXP() {
-    int[][] data = DataReader.LoadFile($"./Dataset/{datasets[0]}");
+void RUN_DEBUG_EXP(int datasetNum) {
+    string filename = datasets[datasetNum];
+    int[][] data = DataReader.LoadFile($"./Dataset/{filename}");
     Evolution evo = new Builder()
-        .Configure(datasets[8], paramConfigs[0])
+        .Configure(filename, new(10000,1000,0.001))
         .WithData(data)
-        .SetMatingPoolMethod(matingPoolMethods[0])
+        .SetMatingPoolMethod(LinearRanking)
         //.SetMatingPoolMethod(RouletteWheel)
         .SetCrossoverMethod(LinearOrderCrossOver)
         .SetMutationMethod(EasySwap)
-        .SetEnvironmentSelection(envSelectionMethods[0])
-        //.SetEnvironmentSelection(GenerationModel)
+        .SetEnvironmentSelection(GenerationModel)
         .SetSolver(new SolverSA(22136, 1f, 0.999f))
         .Build();
 
@@ -102,6 +106,8 @@ void RunExperiment(ExperimentConfig expConfig, int epochCount) {
     for (int epoch = 0; epoch < epochCount; epoch++) {
         Console.WriteLine($"Running {expConfig.Dataset}, Epoch: {epoch}");
         int[][] data = DataReader.LoadFile($"./Dataset/{expConfig.Dataset}");
+
+        // setup the pipeline
         Evolution evo = new Builder()
             .Configure(expConfig.Dataset, expConfig.Config)
             .WithData(data)

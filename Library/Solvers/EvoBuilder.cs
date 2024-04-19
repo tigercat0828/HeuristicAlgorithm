@@ -1,11 +1,6 @@
 ﻿using Library.Configs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Library.Solvers; 
+namespace Library.Solvers;
 public partial class Evolution {
     // Builder-Pattern
     public delegate List<JobSche> MatingPoolDelegate(List<JobSche> groups);

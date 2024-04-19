@@ -5,7 +5,6 @@ using System.Diagnostics;
 using static Library.Solvers.Evolution;
 using static Library.Solvers.EvoMethod;
 Console.OutputEncoding = System.Text.Encoding.UTF8;
-//EntireLog entirelog = new(datasets);
 
 
 // Experienment Parameters
@@ -28,19 +27,28 @@ ParamConfig[] paramConfigs = [
 ];
 MatingPoolDelegate[] matingPoolMethods = [TruncationThreshold50, RouletteWheel, LinearRanking,];
 EnvironmentSelectionDelegate[] envSelectionMethods = [GenerationModel, Mechanism_2_4];
+List<ExperimentConfig> expConfigs = BuildAllExpConfigs();
 
 // Main Program
 // ===============================================================
 
-var expConfigs = BuildAllExpConfigs();
-
+Console.WriteLine("Press 's' for single-thread mode.");
+Console.WriteLine("Press 'm' for multi-thread mode.");
+char userInput = Console.ReadKey().KeyChar;
+Console.WriteLine();
 Stopwatch sw = new();
 sw.Start();
-
-RUN_DEBUG_EXP(8);
-//RUN_ALL_EXPS_SINGLE_THREAD(expConfigs);
-//RUN_ALL_EXPS_MULTI_THREAD(expConfigs);   // Console output will be a mess LOL. may use GUI to improve :)
-
+switch (userInput) {
+    case 's':
+        RUN_ALL_EXPS_SINGLE_THREAD(expConfigs);
+        break;
+    case 'm':
+        RUN_ALL_EXPS_MULTI_THREAD(expConfigs);
+        break;
+    default:
+        RUN_ALL_EXPS_SINGLE_THREAD(expConfigs);
+        break;
+}
 sw.Stop();
 Console.WriteLine($"All time cost : {sw.Elapsed.TotalSeconds}");
 AskOpenOutputFolder();
@@ -80,10 +88,9 @@ void RUN_DEBUG_EXP(int datasetNum) {
     string filename = datasets[datasetNum];
     int[][] data = DataReader.LoadFile($"./Dataset/{filename}");
     Evolution evo = new Builder()
-        .Configure(filename, new(10000,1000,0.001))
+        .Configure(filename, new(1000, 1000, 0.001))
         .WithData(data)
         .SetMatingPoolMethod(LinearRanking)
-        //.SetMatingPoolMethod(RouletteWheel)
         .SetCrossoverMethod(LinearOrderCrossOver)
         .SetMutationMethod(EasySwap)
         .SetEnvironmentSelection(GenerationModel)

@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Library.Solvers;
+﻿namespace Library.Solvers;
 
 /// <summary>
 /// Solution Entity

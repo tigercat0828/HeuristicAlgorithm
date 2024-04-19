@@ -6,7 +6,7 @@
 public abstract class SolverBase {
 
     protected static readonly Random random = new();
-    public int[][] Data {get; private set;}
+    public int[][] Data { get; private set; }
     public int JobNum { get; private set; }
     public int MachineNum { get; private set; }
     public List<int> SpanList { get; private set; }
@@ -60,5 +60,5 @@ public abstract class SolverBase {
         };
         return sche;
     }
-  
+
 }

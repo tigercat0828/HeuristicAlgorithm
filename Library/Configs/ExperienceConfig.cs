@@ -6,7 +6,7 @@ public struct ExperimentConfig(
     ParamConfig config,
     MatingPoolDelegate matingPoolMethod,
     EnvironmentSelectionDelegate envSelectionMethod) {
-    
+
     public string Dataset = dataset;
     public ParamConfig Config = config;
     public MatingPoolDelegate MatingPoolMethod = matingPoolMethod;

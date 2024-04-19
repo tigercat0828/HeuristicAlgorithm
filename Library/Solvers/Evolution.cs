@@ -1,5 +1,4 @@
-﻿using Library.Configs;
-using Library.IO;
+﻿using Library.IO;
 using Library.Widgets;
 using System.Diagnostics;
 
@@ -22,7 +21,7 @@ public partial class Evolution {
 
     // Env Selection delegate
     private Evolution() { } // Make the constructor private
-  
+
     public JobSche Run() {
 
         Console.Write($"{LogFile.GetExpName()}   ");
@@ -46,8 +45,8 @@ public partial class Evolution {
                     (JobSche child1, JobSche child2) = CrossoverMethod(parent1, parent2, m_Solver);
 
                     // mutation
-                    if (EvoRandom.Prob() < m_MutationRate)  MutationMethod(child1); 
-                    if (EvoRandom.Prob() < m_MutationRate)  MutationMethod(child2); 
+                    if (EvoRandom.Prob() < m_MutationRate) MutationMethod(child1);
+                    if (EvoRandom.Prob() < m_MutationRate) MutationMethod(child2);
 
                     // environment selection 
                     (JobSche sc1, JobSche sc2) = EnvironmentSelectionMethod(parent1, parent2, child1, child2);
@@ -107,5 +106,5 @@ public partial class Evolution {
         figure.GanttChart(m_Data, Result);
         figure.SaveFigure($"./Output/{expname}_{epoch}.png");
     }
-   
+
 }

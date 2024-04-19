@@ -40,7 +40,7 @@ public static class EvoMethod {
                 }
             }
         }
-        
+
         return matingPool;
     }
     public static List<JobSche> LinearRanking(List<JobSche> population) {

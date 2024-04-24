@@ -9,7 +9,7 @@ Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 // Experienment Parameters
 // ===============================================
-const int EPOCH = 1;
+const int EPOCH = 20;
 List<string> datasets = [
  "tai20_5_1.txt",
  "tai20_10_1.txt",
@@ -23,7 +23,7 @@ List<string> datasets = [
 ];
 
 ParamConfig[] paramConfigs = [
-    new(10,10,0.001f)     // generation, population, mutationRate
+    new(100,100,0.001f)     // generation, population, mutationRate
 ];
 MatingPoolDelegate[] matingPoolMethods = [TruncationThreshold50, RouletteWheel, LinearRanking,];
 EnvironmentSelectionDelegate[] envSelectionMethods = [GenerationModel, Mechanism_2_4];

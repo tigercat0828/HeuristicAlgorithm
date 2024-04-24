@@ -23,7 +23,23 @@ List<string> datasets = [
 ];
 
 ParamConfig[] paramConfigs = [
-    new(100,100,0.001f)     // generation, population, mutationRate
+    // generation, population, mutationRate
+    new(100,100,0.001f),     
+    // compare generation
+    //new(150,100,0.001f),
+    //new(200,100,0.001f),
+    //new(250,100,0.001f),
+    //new(300,100,0.001f),
+    //new(350,100,0.001f),
+    //new(350,100,0.001f),
+
+    // compare population
+    //new(150, 50,0.001f),
+    //new(200,100,0.001f),
+    //new(250,200,0.001f),
+    //new(300,250,0.001f),
+    //new(350,300,0.001f),
+    //new(350,350,0.001f),
 ];
 MatingPoolDelegate[] matingPoolMethods = [TruncationThreshold50, RouletteWheel, LinearRanking,];
 EnvironmentSelectionDelegate[] envSelectionMethods = [GenerationModel, Mechanism_2_4];

@@ -1,14 +1,19 @@
-﻿namespace Library.Solvers;
+﻿using System.Text.Json.Serialization;
+
+namespace Library.Solvers;
 
 /// <summary>
 /// Solution Entity
 /// </summary>
-public class JobSche(int[] order, int makespan) {
+public class JobSche {
+    public JobSche(int[] order, int makespan)
+    {
+        this.order = [..order];
+        this.makespan = makespan;
+    }
 
-    // [JsonIgnore]
-    public int[] order = [.. order];
-
-    public int makespan = makespan;
+    public int makespan { get; set; }
+    public int[] order { get; set; }
     public string orderjsonstr => string.Join(" ", order);
     public JobSche() : this([], 0) { }
     public JobSche(int[] order) : this(order, 0) { }

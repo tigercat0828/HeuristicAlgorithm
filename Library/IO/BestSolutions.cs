@@ -34,9 +34,22 @@ namespace Library.IO {
             }
         }
         public static void Save() {
-            JsonSerializerOptions options = new() { WriteIndented = true };
+            JsonSerializerOptions options = new() { WriteIndented = true, IncludeFields = true};
             string jsonString = JsonSerializer.Serialize(Solutions, options);
             File.WriteAllText(filename, jsonString);
+
+            using (StreamWriter writer = new StreamWriter("./Output/BestSolutions.csv")) {
+                // Write the header to the file
+                writer.WriteLine("Dataset, Makespan, Order");
+
+                foreach (var solution in Solutions) {
+                    string dataset = solution.Key;
+                    var sche = solution.Value;
+                  
+                    writer.WriteLine($"{dataset},{sche.makespan}, {sche.orderjsonstr}");
+                }
+            }
+
         }
 
         public static void Load() {

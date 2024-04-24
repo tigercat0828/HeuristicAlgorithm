@@ -130,7 +130,7 @@ void AskOpenOutputFolder() {
 }
 void RunExperiment(ExperimentConfig expConfig, int epochCount) {
     for (int epoch = 0; epoch < epochCount; epoch++) {
-        Console.WriteLine($"Running {expConfig.Dataset}, Epoch: {epoch}");
+        Console.WriteLine($"Running {expConfig.Dataset}, {epoch}");
         int[][] data = DataReader.LoadFile($"./Dataset/{expConfig.Dataset}");
 
         // setup the pipeline

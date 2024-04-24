@@ -1,0 +1,56 @@
+﻿using Library.Solvers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
+
+namespace Library.IO {
+    public static  class BestSolutions {
+        static string filename = "./Output/BestSolutions.json";
+        static List<string> datasets = [
+            "tai20_5_1.txt",
+            "tai20_10_1.txt",
+            "tai20_20_1.txt",
+            "tai50_5_1.txt",
+            "tai50_10_1.txt",
+            "tai50_20_1.txt",
+            "tai100_5_1.txt",
+            "tai100_10_1.txt",
+            "tai100_20_1.txt",
+        ];
+
+        public static Dictionary<string, JobSche> Solutions { get; private set; }
+      
+        public static void CompareAndUpdate(string dataset, JobSche sche) {
+            if (Solutions[dataset] is null) {
+                Solutions[dataset] = sche;
+                return;
+            }
+            if (sche.makespan <  Solutions[dataset].makespan) {
+                Solutions[dataset] = sche;
+            }
+        }
+        public static void Save() {
+            JsonSerializerOptions options = new() { WriteIndented = true };
+            string jsonString = JsonSerializer.Serialize(Solutions, options);
+            File.WriteAllText(filename, jsonString);
+        }
+
+        public static void Load() {
+            string jsonString = File.ReadAllText(filename);
+            if(string.IsNullOrEmpty(jsonString)) {
+                Solutions = [];
+                foreach (var dataset in datasets) {
+                    Solutions.Add(dataset, null!);
+                }
+            }
+            else {
+                Solutions = JsonSerializer.Deserialize<Dictionary<string, JobSche>>(jsonString);
+            }
+           
+        }
+    }
+}

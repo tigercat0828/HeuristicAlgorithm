@@ -28,12 +28,13 @@ ParamConfig[] paramConfigs = [
 MatingPoolDelegate[] matingPoolMethods = [TruncationThreshold50, RouletteWheel, LinearRanking,];
 EnvironmentSelectionDelegate[] envSelectionMethods = [GenerationModel, Mechanism_2_4];
 List<ExperimentConfig> expConfigs = BuildAllExpConfigs();
-
+CheckDiretory();
+BestSolutions.Load();
 // Main Program
 // ===============================================================
-
+Report report = new(datasets);
 Console.WriteLine("Press 's' for single-thread mode.");
-Console.WriteLine("Press 'm' for multi-thread mode.");
+Console.WriteLine("Press 'm' for multi-thread mode. (not safe 🥹)");
 char userInput = Console.ReadKey().KeyChar;
 Console.WriteLine();
 Stopwatch sw = new();
@@ -51,6 +52,8 @@ switch (userInput) {
 }
 sw.Stop();
 Console.WriteLine($"All time cost : {sw.Elapsed.TotalSeconds}");
+report.MakeCSV("./Output/report.csv");
+BestSolutions.Save();
 AskOpenOutputFolder();
 
 
@@ -127,5 +130,21 @@ void RunExperiment(ExperimentConfig expConfig, int epochCount) {
         evo.Run();
         Console.WriteLine(evo.Result + "\n");
         evo.SaveLog(epoch);
+        report.AddLog(expConfig.Dataset ,evo.LogFile);
+        BestSolutions.CompareAndUpdate(expConfig.Dataset, evo.Result);
+    }
+}
+void CheckDiretory() {
+    if (!Directory.Exists("./Output")) {
+        Directory.CreateDirectory("./Output");
+    }
+    if (!File.Exists("./Output/BestSolutions.json")) {
+        File.Create("./Output/BestSolutions.json");
+    }
+    if (!Directory.Exists("./Output/logs")) {
+        Directory.CreateDirectory("./Output/logs");
+    }
+    if (!Directory.Exists("./Output/figures")) {
+        Directory.CreateDirectory("./Output/figures");
     }
 }

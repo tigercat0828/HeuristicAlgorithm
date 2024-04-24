@@ -96,15 +96,13 @@ public partial class Evolution {
         //Console.WriteLine($"Gen {K + 1, 2} : μ = {mean:F2}, σ = {deviation:F2}"); // Debug
     }
     public void SaveLog(int epoch) {
-        if (!Directory.Exists("./Output")) {
-            Directory.CreateDirectory("./Output");
-        }
+
         LogFile.SaveLog(epoch);
 
         string expname = LogFile.GetExpName();
         Figure figure = new("Gantt", "makespan", "machine #");
         figure.GanttChart(m_Data, Result);
-        figure.SaveFigure($"./Output/{expname}_{epoch}.png");
+        figure.SaveFigure($"./Output/figures/{expname}_{epoch}.png");
     }
 
 }

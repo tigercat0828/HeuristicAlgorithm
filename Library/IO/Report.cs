@@ -11,16 +11,12 @@ public class Report {
     public void AddLog(string dataset, LogFile log) {
         dataset_logs[dataset].Add(log);
     }
-    public void MakeCSV() {
-        // Specify the file path where you want to write the content
-        string filePath = "./Output/Report.csv";
+    public void MakeCSV(string filePath) {
 
-        // Write content to the file using StreamWriter
         using (StreamWriter writer = new StreamWriter(filePath)) {
             // Write the header to the file
             writer.WriteLine("Dataset, makespan,Generation,Population, MutationRate,MatingPool,EnvSelect,LocalSearch,order");
 
-            // Loop through the dataset_logs and write each entry to the file
             foreach (var dataset_log in dataset_logs) {
                 string dataset = dataset_log.Key;
                 var logs = dataset_log.Value;

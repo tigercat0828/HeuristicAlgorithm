@@ -1,14 +1,11 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Library.Solvers;
+﻿namespace Library.Solvers;
 
 /// <summary>
 /// Solution Entity
 /// </summary>
 public class JobSche {
-    public JobSche(int[] order, int makespan)
-    {
-        this.order = [..order];
+    public JobSche(int[] order, int makespan) {
+        this.order = [.. order];
         this.makespan = makespan;
     }
 

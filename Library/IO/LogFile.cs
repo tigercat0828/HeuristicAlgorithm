@@ -41,7 +41,7 @@ public class LogFile {
         // will be the ouput filename like [tai_20_5][...].json
         string filename = GetExpName();
         string jsonString = JsonSerializer.Serialize(this, options);
-        File.WriteAllText($"./Output/logs/{filename}_{epoch}.json", jsonString);
+        File.WriteAllText($"./Output/Logs/{filename}_{epoch}.json", jsonString);
         return;
     }
 

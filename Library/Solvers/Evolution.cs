@@ -1,5 +1,6 @@
 ﻿using Library.IO;
 using Library.Widgets;
+using System.Data;
 using System.Diagnostics;
 
 namespace Library.Solvers;
@@ -12,6 +13,7 @@ public partial class Evolution {
     private int m_Population;
     private double m_MutationRate;
     private SolverBase m_Solver; // local search policy
+    public List<int> m_MakespanList = [];
     public JobSche Result { get; private set; }
     public LogFile LogFile { get; private set; }
     private MatingPoolDelegate MatingPoolMethod { get; set; }
@@ -65,6 +67,7 @@ public partial class Evolution {
                 if (localBest.makespan < Result.makespan) {
                     Result = localBest;
                 }
+                m_MakespanList.Add(localBest.makespan);
                 progress.Report((double)i / m_Generations);
             }
         }
@@ -79,9 +82,22 @@ public partial class Evolution {
     private List<JobSche> InitialPopulations() {
         // Init Population
         List<JobSche> population = new(m_Population);
+        HashSet<int[]> orders = [];
+        JobSche entity = new();
         for (int i = 0; i < m_Population; i++) {
-            var entity = m_Solver.Run();
-            population.Add(entity);
+            bool duplicate = false;
+            do {
+                entity = m_Solver.Run();
+                duplicate = orders.Contains(entity.order);
+                if (duplicate)
+                    Console.WriteLine("dup");
+                else
+                    duplicate =false;
+
+            } while (duplicate);
+
+            orders.Add(entity.order);
+            population.Add(new(entity));
         }
         return population;
     }
@@ -96,13 +112,15 @@ public partial class Evolution {
         //Console.WriteLine($"Gen {K + 1, 2} : μ = {mean:F2}, σ = {deviation:F2}"); // Debug
     }
     public void SaveLog(int epoch) {
-
         LogFile.SaveLog(epoch);
-
         string expname = LogFile.GetExpName();
-        Figure figure = new("Gantt", "makespan", "machine #");
-        figure.GanttChart(m_Data, Result);
-        figure.SaveFigure($"./Output/figures/{expname}_{epoch}.png");
+        Figure ganttFigure = new("Gantt", "makespan", "machine #");
+        ganttFigure.GanttChart(m_Data, Result);
+        ganttFigure.SaveFigure($"./Output/Figures/MakespanGantt/{expname}_gantt_{epoch}.png");
+        Figure scatterFigure = new($"Gen: {m_Generations}, Pop: {m_Population}", "generations", "makespan(local optimun)");
+        var gens = Enumerable.Range(1, m_MakespanList.Count).ToList();
+        scatterFigure.ScatterChart(gens, m_MakespanList);
+        scatterFigure.SaveFigure($"./Output/Figures/Convergence/{expname}_cvg_{epoch}.png"); // convergence
     }
 
 }

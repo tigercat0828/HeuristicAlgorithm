@@ -1,14 +1,8 @@
 ﻿using Library.Solvers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 
 namespace Library.IO {
-    public static  class BestSolutions {
+    public static class BestSolutions {
         static string filename = "./Output/BestSolutions.json";
         static List<string> datasets = [
             "tai20_5_1.txt",
@@ -23,7 +17,7 @@ namespace Library.IO {
         ];
 
         public static Dictionary<string, JobSche> Solutions { get; private set; }
-      
+
         public static void CompareAndUpdate(string dataset, JobSche sche) {
             if (Solutions[dataset] is null) {
                 Solutions[dataset] = sche;
@@ -34,7 +28,7 @@ namespace Library.IO {
             }
         }
         public static void Save() {
-            JsonSerializerOptions options = new() { WriteIndented = true, IncludeFields = true};
+            JsonSerializerOptions options = new() { WriteIndented = true, IncludeFields = true };
             string jsonString = JsonSerializer.Serialize(Solutions, options);
             File.WriteAllText(filename, jsonString);
 
@@ -45,7 +39,7 @@ namespace Library.IO {
                 foreach (var solution in Solutions) {
                     string dataset = solution.Key;
                     var sche = solution.Value;
-                  
+
                     writer.WriteLine($"{dataset},{sche.makespan}, {sche.orderjsonstr}");
                 }
             }
@@ -54,7 +48,7 @@ namespace Library.IO {
 
         public static void Load() {
             string jsonString = File.ReadAllText(filename);
-            if(string.IsNullOrEmpty(jsonString)) {
+            if (string.IsNullOrEmpty(jsonString)) {
                 Solutions = [];
                 foreach (var dataset in datasets) {
                     Solutions.Add(dataset, null!);
@@ -63,7 +57,7 @@ namespace Library.IO {
             else {
                 Solutions = JsonSerializer.Deserialize<Dictionary<string, JobSche>>(jsonString);
             }
-           
+
         }
     }
 }

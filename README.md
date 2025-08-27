@@ -1,3 +1,57 @@
+# Heuristic Algorithm
+
+## Multi-objective Permutation Flowshop Scheduling Problem
+定序流線型工廠排程問題是一種特定的流線型工廠排程問題。輸入為一組工作 $J= \{ j_1, j_2, \dots ,j_n \} $，一組機器 $M={m_1, m_2, \dots , m_n \}$及各工作在各機器作業的所需時長的表格T，如下表。輸出為一工作序列(Job order)。將每個工作安排成一順序送入機器mi中進行作業，且同一時間機器只能處理一份工作。所有工作都需要按照 $m_1, m_2, \dots, \dots , m_n$ 依序送入。目標是找到最短完工時間的工作順序。
+
+|       | $m_1$ | $m_2$ | $m_3$ |
+|-------|-------|-------|-------|
+| $j_1$ |   3   |   2   |   3   |
+| $j_2$ |   4   |   2   |   1   |
+| $j_3$ |   3   |   2   |   3   |
+| $j_4$ |   1   |   2   |   4   |
+
+
+### Encoding
+定序流線型工廠排程的編碼以工作編號的排序表示。如 [1, 2, 3, ..., N]，有N!種可能的工作序列。
+
+隨機生成一工作序列(作為inital solution)
+```
+order = []
+For i = 0..N−1 
+    order[i] := i
+End
+For i = 0..N−1
+    t = RandomInt(0, i+1)    
+    Swap(order[t], order[i])
+End
+Return order
+```
+### Decoding
+解碼的結果是計算出工作序列的完工時間(Makespan)
+依據上表，以工作順序[1, 4, 2, 3]得到甘特圖與makespan=16
+![decoding_gantt](screenshots/decoding_gantt.png)
+
+```
+// decoding psuedocode
+makespan = []
+Foreach job In order
+    time = makespan[0];
+    For m = 0..MACHINE_NUM−1
+        start = Max(makespan[m], time)
+        time = start + DATA[job][m]               
+        makespan[m] = start + DATA[job][m]
+   End
+End
+Return makespan[MACHINE_NUM − 1]
+```
+
+## Implemented Algorithm
+- 迭代法 (Iterative Improvement, II)
+- 模擬退火法 (Simulated Annealing, SA)
+- 禁忌搜尋法 (Tabu Search, TS)
+
+## Result (Take minimal makespan)
+
 | Dataset         | Makespan | Order                                                                                                                                                                                                                                                                                                      |
 |-----------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | tai20_5_1.txt   | 1278     |  8 14 5   16 4 2 3 17 18 0 1 6 10 12 7 15 13 9 19 11                                                                                                                                                                                                                                                       |

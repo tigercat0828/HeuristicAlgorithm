@@ -1,7 +1,7 @@
 # Heuristic Algorithm
 
 ## Multi-objective Permutation Flowshop Scheduling Problem
-定序流線型工廠排程問題是一種特定的流線型工廠排程問題。輸入為一組工作 $J= \{ j_1, j_2, \dots ,j_n \} $，一組機器 $M={m_1, m_2, \dots , m_n \}$及各工作在各機器作業的所需時長的表格T，如下表。輸出為一工作序列(Job order)。將每個工作安排成一順序送入機器mi中進行作業，且同一時間機器只能處理一份工作。所有工作都需要按照 $m_1, m_2, \dots, \dots , m_n$ 依序送入。目標是找到最短完工時間的工作順序。
+定序流線型工廠排程問題是一種特定的流線型工廠排程問題。輸入為一組工作 $J= \{ j_1, j_2, \dots ,j_n \} $，一組機器 $M=\{m_1, m_2, \dots , m_n \} $及各工作在各機器作業的所需時長的表格T，如下表。輸出為一工作序列(Job order)。將每個工作安排成一順序送入機器mi中進行作業，且同一時間機器只能處理一份工作。所有工作都需要按照 $m_1, m_2, \dots, \dots , m_n$ 依序送入。目標是找到最短完工時間的工作順序。
 
 |       | $m_1$ | $m_2$ | $m_3$ |
 |-------|-------|-------|-------|
@@ -28,29 +28,42 @@ Return order
 ```
 ### Decoding
 解碼的結果是計算出工作序列的完工時間(Makespan)
-依據上表，以工作順序[1, 4, 2, 3]得到甘特圖與makespan=16
-![decoding_gantt](screenshots/decoding_gantt.png)
+依據上表，以工作順序 [1, 4, 2, 3] 得到甘特圖與 makespan=16
+
+<img src="screenshots/decoding_gantt.png" alt="decoding_gantt" width="30%">
+
 
 ```
 // decoding psuedocode
-makespan = []
+MT = [] // machine time
 Foreach job In order
-    time = makespan[0];
+    time = MT[0];
     For m = 0..MACHINE_NUM−1
-        start = Max(makespan[m], time)
-        time = start + DATA[job][m]               
-        makespan[m] = start + DATA[job][m]
+        start = Max(MT[m], time)
+        time = start + DATA[m][job]               
+        MT[m] = start + DATA[m][job]
    End
 End
-Return makespan[MACHINE_NUM − 1]
+Return MT[MACHINE_NUM − 1]
 ```
 
 ## Implemented Algorithm
 - 迭代法 (Iterative Improvement, II)
 - 模擬退火法 (Simulated Annealing, SA)
 - 禁忌搜尋法 (Tabu Search, TS)
+- 基因演算法 (Genetic Alorithm)
+
+<img src="screenshots/ga_procedure.png" alt="GA_Procedure" width="50%">
+
+## ScreenShots
+![WindowView](screenshots/mainwindow_view.png)
+
+![Result](screenshots/exp_result.png)
+
 
 ## Result (Take minimal makespan)
+Dataset Source : 
+E. Taillard， “Benchmarks for basic scheduling problems，” European Journal of Operational Research， vol. 64， pp. 278–285， 1993.
 
 | Dataset         | Makespan | Order                                                                                                                                                                                                                                                                                                      |
 |-----------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -63,3 +76,6 @@ Return makespan[MACHINE_NUM − 1]
 | tai100_5_1.txt  | 5495     |  89 57 24 47 30 43 10 41 83 73 84   44 48 63 61 38 65 72 66 81 18 59 49 70 92 28 8 71 5 99 39 40 45 35 50 95 90   26 4 37 33 96 2 75 74 82 6 12 17 46 27 78 55 68 29 1 15 52 7 94 14 77 19 3 64   87 54 13 56 42 11 25 67 32 60 80 88 85 36 9 22 79 69 91 51 23 21 31 20 53 76   86 98 62 34 16 93 97 58 0 |
 | tai100_10_1.txt | 5837     |  69 60 4 59 38 23 63 27 57 80 41 0   16 43 50 34 19 14 30 96 88 83 49 56 75 95 84 82 33 72 87 76 20 48 79 78 28 40   94 35 46 42 97 92 64 5 52 37 91 90 54 21 81 62 12 51 9 45 7 3 6 61 55 32 13 1   10 8 86 89 98 66 65 18 44 67 26 36 99 85 93 47 73 71 77 70 53 17 22 15 74 68   24 31 29 58 2 39 25 11 |
 | tai100_20_1.txt | 6368     |  53 21 78 32 9 34 75 73 47 82 20 3   81 80 17 29 27 24 0 39 88 30 98 92 15 31 43 69 84 79 50 58 11 56 59 23 55 61   5 40 2 85 52 54 64 93 90 60 99 44 19 46 77 74 45 72 10 8 4 26 1 70 38 36 57   66 91 41 65 95 83 62 22 42 25 28 87 63 16 76 97 35 14 13 18 94 71 33 86 7 37   67 51 96 49 48 68 89 12 6 |
+
+
+##

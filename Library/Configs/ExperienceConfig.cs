@@ -1,4 +1,4 @@
-﻿using static Library.Solvers.Evolution;
+﻿using static Library.Solvers.EvolutionAlgo;
 namespace Library.Configs;
 
 public struct ExperimentConfig(

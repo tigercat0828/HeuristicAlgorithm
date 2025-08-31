@@ -24,18 +24,18 @@ public class SolverSA : SolverBase {
         // cooling tactic
         while (currentTemperature > Epsilon) {
             JobSche neighbor = Neighbor(solution);
-            if (neighbor.makespan <= solution.makespan) {
+            if (neighbor.Makespan <= solution.Makespan) {
                 solution = neighbor;
             }
             else {
-                float delta = (solution.makespan - neighbor.makespan) / currentTemperature;
+                float delta = (solution.Makespan - neighbor.Makespan) / currentTemperature;
                 if (MathF.Exp(delta / currentTemperature) > random.NextSingle()) {
                     solution = neighbor;
                 }
             }
-            SpanList.Add(solution.makespan);
+            SpanList.Add(solution.Makespan);
             currentTemperature *= Theta;   // geometry cooldown
-            if (solution.makespan <= best.makespan) {
+            if (solution.Makespan <= best.Makespan) {
                 best = new(solution);
             }
         }
@@ -48,7 +48,7 @@ public class SolverSA : SolverBase {
     private JobSche Neighbor(JobSche sche) {
         int a = random.Next(0, JobNum);
         int b = random.Next(0, JobNum);
-        int[] order = [.. sche.order];
+        int[] order = [.. sche.Order];
         (order[a], order[b]) = (order[b], order[a]);
         int makespan = Evaluate(order);
         JobSche neighbor = new(order, makespan);

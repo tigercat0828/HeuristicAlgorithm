@@ -55,8 +55,8 @@ public abstract class SolverBase {
             (order[i], order[t]) = (order[t], order[i]);
         }
         JobSche sche = new() {
-            order = order,
-            makespan = Evaluate(order)
+            Order = order,
+            Makespan = Evaluate(order)
         };
         return sche;
     }

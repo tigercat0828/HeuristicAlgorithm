@@ -4,7 +4,7 @@ using System.Data;
 using System.Diagnostics;
 
 namespace Library.Solvers;
-public partial class Evolution {
+public partial class EvolutionAlgo {
 
     // Configuration
     public string Dataset { get; private set; }
@@ -22,8 +22,7 @@ public partial class Evolution {
     private EnvironmentSelectionDelegate EnvironmentSelectionMethod { get; set; }
 
     // Env Selection delegate
-    private Evolution() { } // Make the constructor private
-
+    private EvolutionAlgo() { } // Make the constructor private
     public JobSche Run() {
 
         Console.Write($"{LogFile.GetExpName()}   ");
@@ -32,7 +31,7 @@ public partial class Evolution {
 
         // Init Population
         List<JobSche> population = InitialPopulations();
-        Result = population.MinBy(sche => sche.makespan)!;
+        Result = population.MinBy(sche => sche.Makespan)!;
 
         // Evolution Start
         using (var progress = new ProgressBar()) {
@@ -63,11 +62,11 @@ public partial class Evolution {
 
                 WriteLogFile(population);
 
-                var localBest = population.MinBy(sche => sche.makespan)!;
-                if (localBest.makespan < Result.makespan) {
+                var localBest = population.MinBy(sche => sche.Makespan)!;
+                if (localBest.Makespan < Result.Makespan) {
                     Result = localBest;
                 }
-                m_MakespanList.Add(localBest.makespan);
+                m_MakespanList.Add(localBest.Makespan);
                 progress.Report((double)i / m_Generations);
             }
         }
@@ -78,7 +77,6 @@ public partial class Evolution {
         LogFile.TimeCost = Math.Round(sw.Elapsed.TotalSeconds, 2);
         return Result;
     }
-
     private List<JobSche> InitialPopulations() {
         // Init Population
         List<JobSche> population = new(m_Population);
@@ -88,22 +86,22 @@ public partial class Evolution {
             bool duplicate = false;
             do {
                 entity = m_Solver.Run();
-                duplicate = orders.Contains(entity.order);
+                duplicate = orders.Contains(entity.Order);
                 if (duplicate)
                     Console.WriteLine("dup");
                 else
-                    duplicate =false;
+                    duplicate = false;
 
             } while (duplicate);
 
-            orders.Add(entity.order);
+            orders.Add(entity.Order);
             population.Add(new(entity));
         }
         return population;
     }
     int K = 0;
     private void WriteLogFile(List<JobSche> entities) {
-        int[] spans = entities.Select(sc => sc.makespan).ToArray();
+        int[] spans = entities.Select(sc => sc.Makespan).ToArray();
         double mean = spans.Average();
         double variance = spans.Sum(number => Math.Pow(number - mean, 2)) / spans.Length;
         double deviation = Math.Sqrt(variance);

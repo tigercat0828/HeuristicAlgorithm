@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library", "Library\Library.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Temp", "Temp\Temp.csproj", "{6133CFDF-4EC0-4E4E-94C4-DC86180DAB07}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeuristicAlgorithm.Core", "HeuristicAlgorithm.Core\HeuristicAlgorithm.Core.csproj", "{D032E401-AA4F-4E01-87D3-DDDFEB2DDDF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeuristicAlgorithm.WPF", "HeuristicAlgorithm.WPF\HeuristicAlgorithm.WPF.csproj", "{3133ED68-58E3-4639-B11F-73E69A898144}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{6133CFDF-4EC0-4E4E-94C4-DC86180DAB07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6133CFDF-4EC0-4E4E-94C4-DC86180DAB07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6133CFDF-4EC0-4E4E-94C4-DC86180DAB07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D032E401-AA4F-4E01-87D3-DDDFEB2DDDF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D032E401-AA4F-4E01-87D3-DDDFEB2DDDF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D032E401-AA4F-4E01-87D3-DDDFEB2DDDF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D032E401-AA4F-4E01-87D3-DDDFEB2DDDF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3133ED68-58E3-4639-B11F-73E69A898144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3133ED68-58E3-4639-B11F-73E69A898144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3133ED68-58E3-4639-B11F-73E69A898144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3133ED68-58E3-4639-B11F-73E69A898144}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

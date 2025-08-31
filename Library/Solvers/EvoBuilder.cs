@@ -1,7 +1,7 @@
 ﻿using Library.Configs;
 
 namespace Library.Solvers;
-public partial class Evolution {
+public partial class EvolutionAlgo {
     // Builder-Pattern
     public delegate List<JobSche> MatingPoolDelegate(List<JobSche> groups);
     public delegate (JobSche, JobSche) CrossoverDelegate(JobSche parent1, JobSche parent2, SolverBase solver);
@@ -9,19 +9,11 @@ public partial class Evolution {
     public delegate void MutationDelegate(JobSche sche);
     public class Builder {
         bool hasData = false;
-        private Evolution _instance = new();
+        private EvolutionAlgo _instance = new();
 
         public Builder WithData(int[][] data) {
             _instance.m_Data = data;
             hasData = true;
-            return this;
-        }
-        public Builder Configure(string filename, int generations, int population, double mutationRate) {
-            _instance.Dataset = filename;
-            _instance.m_Population = population;
-            _instance.m_Generations = generations;
-            _instance.m_MutationRate = mutationRate;
-            _instance.LogFile = new(filename, generations, population, mutationRate);
             return this;
         }
         public Builder Configure(string filename, ParamConfig config) {
@@ -62,7 +54,7 @@ public partial class Evolution {
             _instance.EnvironmentSelectionMethod = environmentSelection;
             return this;
         }
-        public Evolution Build() {
+        public EvolutionAlgo Build() {
 
             return _instance;
         }

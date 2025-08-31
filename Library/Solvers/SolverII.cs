@@ -11,9 +11,9 @@ public class SolverII() : SolverBase() {
         EnsureDataLoaded();
         int previousSpan = int.MaxValue;
         JobSche solution = init ?? InitialSolution();
-        while (solution.makespan < previousSpan) {
+        while (solution.Makespan < previousSpan) {
 
-            previousSpan = solution.makespan;
+            previousSpan = solution.Makespan;
             SpanList.Add(previousSpan);
 
             List<JobSche> neighbors = Neighbors(solution);
@@ -24,7 +24,7 @@ public class SolverII() : SolverBase() {
     private List<JobSche> Neighbors(JobSche sche) {
         // swap all (i,j) 
         List<JobSche> neighbors = [];
-        int[] order = sche.order;
+        int[] order = sche.Order;
 
         for (int i = 0; i < order.Length; i++) {
             for (int j = i + 1; j < order.Length; j++) {
@@ -43,7 +43,7 @@ public class SolverII() : SolverBase() {
     private JobSche Select(List<JobSche> neighbors, JobSche localBest) {
 
         foreach (var sche in neighbors) {
-            if (sche.makespan < localBest.makespan) {
+            if (sche.Makespan < localBest.Makespan) {
                 localBest = sche;
             }
         }
@@ -64,7 +64,7 @@ public class SolverII() : SolverBase() {
         Parallel.For(0, instance, i => {
             locals[i] = instances[i].Invoke(null!);
         });
-        Result = locals.MinBy(order => order.makespan)!;
+        Result = locals.MinBy(order => order.Makespan)!;
         return Result;
     }
 }

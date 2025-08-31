@@ -4,20 +4,23 @@
 /// Solution Entity
 /// </summary>
 public class JobSche {
-    public JobSche(int[] order, int makespan) {
-        this.order = [.. order];
-        this.makespan = makespan;
+    public JobSche() {
+        this.Order = [];
+        this.Makespan = 0;
     }
-
-    public int makespan { get; set; }
-    public int[] order { get; set; }
-    public string orderjsonstr => string.Join(" ", order);
-    public JobSche() : this([], 0) { }
-    public JobSche(int[] order) : this(order, 0) { }
-    public JobSche(JobSche other) : this(other.order, other.makespan) { }
+    public JobSche(int[] order, int makespan) {
+        this.Order = [.. order];
+        this.Makespan = makespan;
+    }
+    public JobSche(JobSche other) {
+        this.Order = [.. other.Order];
+        this.Makespan = other.Makespan;
+    }
+    public int Makespan;
+    public int[] Order;
+    public string orderjsonstr => string.Join(" ", Order);
 
     public override string ToString() {
-        return $"makespan={makespan}, [{string.Join(", ", order)}]";
+        return $"makespan={Makespan}, [{string.Join(", ", Order)}]";
     }
-    public string GetAnswerString() => string.Join(" ", order);
 }

@@ -22,7 +22,7 @@ public class Report {
                 var logs = dataset_log.Value;
 
                 foreach (var log in logs) {
-                    writer.WriteLine($"{dataset},{log.Result.makespan},{log.Generation},{log.Generation},{log.MutationRate},{log.MatingPoolMethod},{log.EnvironmentMethod},{log.LocalSearchMethod},{log.Result.orderjsonstr}");
+                    writer.WriteLine($"{dataset},{log.Result.Makespan},{log.Generation},{log.Generation},{log.MutationRate},{log.MatingPoolMethod},{log.EnvironmentMethod},{log.LocalSearchMethod},{log.Result.orderjsonstr}");
                 }
             }
         }

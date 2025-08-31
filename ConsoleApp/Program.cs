@@ -2,7 +2,7 @@
 using Library.IO;
 using Library.Solvers;
 using System.Diagnostics;
-using static Library.Solvers.Evolution;
+using static Library.Solvers.EvolutionAlgo;
 using static Library.Solvers.EvoMethod;
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -11,15 +11,15 @@ Console.OutputEncoding = System.Text.Encoding.UTF8;
 // ===============================================
 const int ROUNDS = 10;
 List<string> datasets = [
- "tai20_5_1.txt",
- "tai20_10_1.txt",
- "tai20_20_1.txt",
- "tai50_5_1.txt",
- "tai50_10_1.txt",
- "tai50_20_1.txt",
- "tai100_5_1.txt",
- "tai100_10_1.txt",
- "tai100_20_1.txt",
+    "tai20_5_1.txt",
+    "tai20_10_1.txt",
+    "tai20_20_1.txt",
+    "tai50_5_1.txt",
+    "tai50_10_1.txt",
+    "tai50_20_1.txt",
+    "tai100_5_1.txt",
+    "tai100_10_1.txt",
+    "tai100_20_1.txt",
 ];
 
 ParamConfig[] paramConfigs = [
@@ -119,7 +119,7 @@ List<ExperimentConfig> BuildAllExpConfigs() {
 void RUN_DEBUG_EXP(int datasetNum) {
     string filename = datasets[datasetNum];
     int[][] data = DataReader.LoadFile($"./Dataset/{filename}");
-    Evolution evo = new Builder()
+    EvolutionAlgo evo = new Builder()
         .Configure(filename, new(1000, 1000, 0.001))
         .WithData(data)
         .SetMatingPoolMethod(LinearRanking)
@@ -137,9 +137,8 @@ void AskOpenOutputFolder() {
     Console.WriteLine("Press space to open the Output folder or exit ...");
     if (Console.ReadKey().Key == ConsoleKey.Spacebar) {
         string outputFolder = Path.Combine(Environment.CurrentDirectory, "Output");
-        System.Diagnostics.Process.Start("explorer.exe", outputFolder);
+        Process.Start("explorer.exe", outputFolder);
     }
-
 }
 
 void RunExperiment(ExperimentConfig expConfig, int rounds) {
@@ -149,7 +148,7 @@ void RunExperiment(ExperimentConfig expConfig, int rounds) {
         int[][] data = DataReader.LoadFile($"./Dataset/{expConfig.Dataset}");
 
         // setup the pipeline
-        Evolution evo = new Builder()
+        EvolutionAlgo evo = new Builder()
             .Configure(expConfig.Dataset, expConfig.Config)
             .WithData(data)
             .SetMatingPoolMethod(expConfig.MatingPoolMethod)

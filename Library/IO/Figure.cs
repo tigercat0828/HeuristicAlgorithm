@@ -64,14 +64,14 @@ public class Figure {
         Plot.SavePng(filename, width, height);
     }
     private static List<Bar> GetGhattBars(int[][] data, JobSche sche) {
-        if (data.Length != sche.order.Length) {
+        if (data.Length != sche.Order.Length) {
             throw new Exception("Data and the order length not match");
         }
         int jobs = data.Length;
         int machines = data.First().Length;
         List<Bar> bars = new(jobs * machines);
         int[] machineTime = new int[machines];
-        foreach (int job in sche.order) {
+        foreach (int job in sche.Order) {
             int currentTime = machineTime[0];
             for (int mac = 0; mac < machines; mac++) {
                 int start = Math.Max(machineTime[mac], currentTime);

@@ -3,7 +3,7 @@ public static class EvoMethod {
 
     #region Mating Pool 
     public static List<JobSche> TruncationThreshold50(List<JobSche> group) {
-        JobSche[] candidates = group.OrderBy(sche => sche.makespan).Take(group.Count / 2).ToArray();
+        JobSche[] candidates = group.OrderBy(sche => sche.Makespan).Take(group.Count / 2).ToArray();
         JobSche[] repeat = [.. candidates, .. candidates];
         ShuffleArray(repeat);
         return [.. repeat];
@@ -18,8 +18,8 @@ public static class EvoMethod {
     }
 
     public static List<JobSche> RouletteWheel(List<JobSche> population) {
-        int maxSpan = population.MaxBy(sc => sc.makespan)!.makespan;
-        int[] spans = population.Select(sc => maxSpan - sc.makespan).ToArray();
+        int maxSpan = population.MaxBy(sc => sc.Makespan)!.Makespan;
+        int[] spans = population.Select(sc => maxSpan - sc.Makespan).ToArray();
 
         double total = spans.Sum();
         if (total == 0) {
@@ -46,7 +46,7 @@ public static class EvoMethod {
     public static List<JobSche> LinearRanking(List<JobSche> population) {
         double minP = 0.0;
         double maxP = 2.0;
-        var sorted = population.OrderByDescending(sc => sc.makespan).ToList();
+        var sorted = population.OrderByDescending(sc => sc.Makespan).ToList();
         int n = sorted.Count;
         double[] probTable = new double[n];
         for (int i = 0; i < n; i++) {
@@ -76,7 +76,7 @@ public static class EvoMethod {
 
     #region Crossover
     public static (JobSche, JobSche) LinearOrderCrossOver(JobSche parent1, JobSche parent2, SolverBase solver) {
-        int length = parent1.order.Length;
+        int length = parent1.Order.Length;
         int[] childOrder1 = Enumerable.Repeat(-1, length).ToArray();
         int[] childOrder2 = Enumerable.Repeat(-1, length).ToArray();
 
@@ -86,12 +86,12 @@ public static class EvoMethod {
 
         // Copy a slice from each parent based on the crossover points
         for (int i = start; i <= end; i++) {
-            childOrder1[i] = parent1.order[i];
-            childOrder2[i] = parent2.order[i];
+            childOrder1[i] = parent1.Order[i];
+            childOrder2[i] = parent2.Order[i];
         }
 
-        FillChildWithRemainingElements(parent2.order, childOrder1);
-        FillChildWithRemainingElements(parent1.order, childOrder2);
+        FillChildWithRemainingElements(parent2.Order, childOrder1);
+        FillChildWithRemainingElements(parent1.Order, childOrder2);
         JobSche child1 = new(childOrder1, solver.Evaluate(childOrder1));
         JobSche child2 = new(childOrder2, solver.Evaluate(childOrder2));
         return (child1, child2);
@@ -114,10 +114,10 @@ public static class EvoMethod {
     #region Mutation
 
     public static void EasySwap(JobSche entity) {
-        int jobs = entity.order.Length;
+        int jobs = entity.Order.Length;
         int i = EvoRandom.Next(jobs);
         int j = EvoRandom.Next(jobs);
-        (entity.order[i], entity.order[j]) = (entity.order[j], entity.order[i]);
+        (entity.Order[i], entity.Order[j]) = (entity.Order[j], entity.Order[i]);
     }
     #endregion
 
@@ -136,22 +136,22 @@ public static class EvoMethod {
     public static (JobSche, JobSche) Mechanism_2_4(JobSche parent1, JobSche parent2, JobSche child1, JobSche child2) {
 
         // Compare the first two and second two numbers
-        var (low1, high1) = parent1.makespan < parent2.makespan ? (parent1, parent2) : (parent2, parent1);
-        var (low2, high2) = child1.makespan < child2.makespan ? (child1, child2) : (child2, child1);
+        var (low1, high1) = parent1.Makespan < parent2.Makespan ? (parent1, parent2) : (parent2, parent1);
+        var (low2, high2) = child1.Makespan < child2.Makespan ? (child1, child2) : (child2, child1);
 
         // Find the lowest of the four numbers
-        var lowest = low1.makespan < low2.makespan ? low1 : low2;
+        var lowest = low1.Makespan < low2.Makespan ? low1 : low2;
 
         // Find the second lowest
         JobSche secondLowest;
 
         if (lowest == low1) {
             // If the lowest is from the first pair, compare high1 (the higher of the first pair) and low2 (the lower of the second pair)
-            secondLowest = high1.makespan < low2.makespan ? high1 : low2;
+            secondLowest = high1.Makespan < low2.Makespan ? high1 : low2;
         }
         else {
             // If the lowest is from the second pair, compare low1 (the lower of the first pair) and high2 (the higher of the second pair)
-            secondLowest = low1.makespan < high2.makespan ? low1 : high2;
+            secondLowest = low1.Makespan < high2.Makespan ? low1 : high2;
         }
         return (lowest, secondLowest);
     }

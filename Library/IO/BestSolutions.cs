@@ -23,7 +23,7 @@ namespace Library.IO {
                 Solutions[dataset] = sche;
                 return;
             }
-            if (sche.makespan <  Solutions[dataset].makespan) {
+            if (sche.Makespan < Solutions[dataset].Makespan) {
                 Solutions[dataset] = sche;
             }
         }
@@ -40,7 +40,7 @@ namespace Library.IO {
                     string dataset = solution.Key;
                     var sche = solution.Value;
 
-                    writer.WriteLine($"{dataset},{sche.makespan}, {sche.orderjsonstr}");
+                    writer.WriteLine($"{dataset},{sche.Makespan}, {sche.orderjsonstr}");
                 }
             }
 

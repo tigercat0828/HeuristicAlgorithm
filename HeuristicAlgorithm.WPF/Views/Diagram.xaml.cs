@@ -25,7 +25,7 @@ public partial class Diagram : Window {
         HistoryPlot.Plot.YLabel("MakeSpan");
         HistoryPlot.Plot.Legend.IsVisible = true;
 
-        HistoryPlot.Plot.Axes.Bottom.TickGenerator = new NumericFixedInterval(1);
+        // HistoryPlot.Plot.Axes.Bottom.TickGenerator = new NumericFixedInterval(1);
 
         HistoryPlot.Refresh();
         DataContext = this;

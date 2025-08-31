@@ -20,8 +20,6 @@ public partial class EvolutionAlgo {
     private CrossoverDelegate CrossoverMethod { get; set; }
     private MutationDelegate MutationMethod { get; set; }
     private EnvironmentSelectionDelegate EnvironmentSelectionMethod { get; set; }
-
-    // Env Selection delegate
     private EvolutionAlgo() { } // Make the constructor private
     public JobSche Run() {
 
@@ -120,5 +118,4 @@ public partial class EvolutionAlgo {
         scatterFigure.ScatterChart(gens, m_MakespanList);
         scatterFigure.SaveFigure($"./Output/Figures/Convergence/{expname}_cvg_{epoch}.png"); // convergence
     }
-
 }

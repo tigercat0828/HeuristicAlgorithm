@@ -16,50 +16,99 @@
         <Style TargetType="TextBox">
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Width" Value="60"/>
-            <Setter Property="Margin" Value="3 0"/>
+            <Setter Property="Margin" Value="3 0 3 0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
         <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="3 0"/>
+            <Setter Property="Margin" Value="0 0 5 0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
         <!-- Iterative Improve -->
         <DataTemplate DataType="{x:Type models:ParamII}">
-            <StackPanel Orientation="Horizontal">
-                <Button Content="Run" 
-                    Command="{Binding DataContext.IterativeImprovementCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                    Margin="5 0"/>
-            </StackPanel>
         </DataTemplate>
 
         <!-- Simulated Annealing -->
         <DataTemplate DataType="{x:Type models:ParamSA}">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Initial Temperature"/>
+            <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+                <Border VerticalAlignment="Center">
+                    <TextBlock Text="Initial Temperature"/>
+                </Border>
                 <TextBox Text="{Binding Temperature}"/>
+                <Border VerticalAlignment="Center">
                 <TextBlock Text="Epsilon"/>
-                <TextBox Text="{Binding Epsilon}"/>
-                <TextBlock Text="Theta"/>
+                </Border>
+                    <TextBox Text="{Binding Epsilon}"/>
+                <Border VerticalAlignment="Center">
+                    <TextBlock Text="Theta"/>
+                </Border>
                 <TextBox Text="{Binding Theta}"/>
-                <Button Content="Run" 
-                    Command="{Binding DataContext.SimulatedAnnealingCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
             </StackPanel>
         </DataTemplate>
 
         <!-- Tabu Search -->
         <DataTemplate DataType="{x:Type models:ParamTS}">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Tenure"/>
+            <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+                <Border VerticalAlignment="Center">
+                    <TextBlock Text="Tenure"/>
+                </Border>
                 <TextBox Text="{Binding Tenure}"/>
-                <TextBlock Text="Iterations"/>
+                <Border VerticalAlignment="Center">
+                    <TextBlock Text="Iterations"/>
+                </Border>
                 <TextBox Text="{Binding MaxIter}"/>
-                <Button Content="Run" 
-                    Command="{Binding DataContext.TabuSearchCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
             </StackPanel>
         </DataTemplate>
+        
+        
+        <!-- Genetic Algorithm -->
+        <DataTemplate DataType="{x:Type models:ParamGA}">
+            <StackPanel >
+                <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+                    <TextBlock Text="Generations"/>
+                    <TextBox Text="{Binding Generations}"/>
+                    <TextBlock Text="Population"/>
+                    <TextBox Text="{Binding Population}"/>
+                    <TextBlock Text="MutationRate"/>
+                    <TextBox Text="{Binding MutationRate}"/>
+                </StackPanel>
+                <StackPanel Margin="0 10 0 0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
 
+                        <TextBlock Text="MatingPool" Grid.Row="0" Grid.Column="0" />
+                        <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 3"
+                                  ItemsSource="{Binding MatingPoolOptions}" 
+                                  SelectedItem="{Binding SelectedMatingPool, Mode=TwoWay}"/>
+                        
+                        <TextBlock Text="Crossover" Grid.Row="1" Grid.Column="0"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" Margin="0 3"
+                                  ItemsSource="{Binding CrossoverOptions}" 
+                                  SelectedItem="{Binding SelectedCrossover, Mode=TwoWay}" />
+
+                        <TextBlock Text="Mutation Way" Grid.Row="2" Grid.Column="0" />
+                        <ComboBox Grid.Row="2" Grid.Column="1" Margin="0 3"
+                                  ItemsSource="{Binding MutationOptions}" 
+                                  SelectedItem="{Binding SelectedMutation, Mode=TwoWay}" />
+
+                        <TextBlock Text="Environment" Grid.Row="3" Grid.Column="0"  />
+                        <ComboBox Grid.Row="3" Grid.Column="1" Margin="0 3"
+                                  ItemsSource="{Binding EnvSelectionOptions}" 
+                                  SelectedItem="{Binding SelectedSelection, Mode=TwoWay}"/>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
     </Window.Resources>
 
     <DockPanel>
@@ -73,13 +122,16 @@
         <StatusBar DockPanel.Dock="Bottom">
             <TextBlock Name="StatusText" Text="{Binding StatusString}" />
         </StatusBar>
-
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
-            <TextBlock Text="選擇演算法" VerticalAlignment="Center" Margin="3 0"/>
-            <ComboBox SelectedIndex="0" Width="180" Margin="5 0"
-                      ItemsSource="{Binding AlgorithmTypes}" 
-                      SelectedItem="{Binding SelectedAlgorithm, Mode=TwoWay}" />
-
+        <StackPanel DockPanel.Dock="Top" Margin="5">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0 0 0 5">
+                <TextBlock Text="演算法" VerticalAlignment="Center"/>
+                <ComboBox SelectedIndex="0" Width="180" Margin="5 0"
+                          ItemsSource="{Binding AlgorithmOptions}" 
+                          SelectedItem="{Binding SelectedAlgorithm, Mode=TwoWay}" />
+                <!-- new run algorithm button here -->
+                <Button Content="執行" Padding="1" Command="{Binding RunSelectedAlgorithmCommand}" />
+            </StackPanel>
+            <Separator />
             <ContentControl Content="{Binding SelectedParam}">
                 <ContentControl.Style>
                     <Style TargetType="ContentControl">
@@ -92,7 +144,7 @@
                 </ContentControl.Style>
             </ContentControl>
         </StackPanel>
-
+        
         <Grid DockPanel.Dock="Top">
             
             <DataGrid ItemsSource="{Binding DataTable}" 

@@ -82,27 +82,27 @@
                             <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Text="MatingPool" Grid.Row="0" Grid.Column="0" />
-                        <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 3"
+                        <ComboBox Grid.Row="0" Grid.Column="1" 
                                   ItemsSource="{Binding MatingPoolOptions}" 
                                   SelectedItem="{Binding SelectedMatingPool, Mode=TwoWay}"/>
                         
                         <TextBlock Text="Crossover" Grid.Row="1" Grid.Column="0"/>
-                        <ComboBox Grid.Row="1" Grid.Column="1" Margin="0 3"
+                        <ComboBox Grid.Row="1" Grid.Column="1" 
                                   ItemsSource="{Binding CrossoverOptions}" 
                                   SelectedItem="{Binding SelectedCrossover, Mode=TwoWay}" />
 
                         <TextBlock Text="Mutation Way" Grid.Row="2" Grid.Column="0" />
-                        <ComboBox Grid.Row="2" Grid.Column="1" Margin="0 3"
+                        <ComboBox Grid.Row="2" Grid.Column="1" 
                                   ItemsSource="{Binding MutationOptions}" 
                                   SelectedItem="{Binding SelectedMutation, Mode=TwoWay}" />
 
                         <TextBlock Text="Environment" Grid.Row="3" Grid.Column="0"  />
-                        <ComboBox Grid.Row="3" Grid.Column="1" Margin="0 3"
+                        <ComboBox Grid.Row="3" Grid.Column="1"
                                   ItemsSource="{Binding EnvSelectionOptions}" 
                                   SelectedItem="{Binding SelectedSelection, Mode=TwoWay}"/>
                     </Grid>

@@ -3,12 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{8BBBA024-AFD8-44AE-9C78-719125708C82}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library", "Library\Library.csproj", "{32B83612-FAD7-46FC-8249-59DE41638A21}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Temp", "Temp\Temp.csproj", "{6133CFDF-4EC0-4E4E-94C4-DC86180DAB07}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeuristicAlgorithm.Core", "HeuristicAlgorithm.Core\HeuristicAlgorithm.Core.csproj", "{D032E401-AA4F-4E01-87D3-DDDFEB2DDDF2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeuristicAlgorithm.WPF", "HeuristicAlgorithm.WPF\HeuristicAlgorithm.WPF.csproj", "{3133ED68-58E3-4639-B11F-73E69A898144}"
@@ -19,18 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8BBBA024-AFD8-44AE-9C78-719125708C82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8BBBA024-AFD8-44AE-9C78-719125708C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8BBBA024-AFD8-44AE-9C78-719125708C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8BBBA024-AFD8-44AE-9C78-719125708C82}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32B83612-FAD7-46FC-8249-59DE41638A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32B83612-FAD7-46FC-8249-59DE41638A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32B83612-FAD7-46FC-8249-59DE41638A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32B83612-FAD7-46FC-8249-59DE41638A21}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6133CFDF-4EC0-4E4E-94C4-DC86180DAB07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6133CFDF-4EC0-4E4E-94C4-DC86180DAB07}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6133CFDF-4EC0-4E4E-94C4-DC86180DAB07}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6133CFDF-4EC0-4E4E-94C4-DC86180DAB07}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D032E401-AA4F-4E01-87D3-DDDFEB2DDDF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D032E401-AA4F-4E01-87D3-DDDFEB2DDDF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D032E401-AA4F-4E01-87D3-DDDFEB2DDDF2}.Release|Any CPU.ActiveCfg = Release|Any CPU

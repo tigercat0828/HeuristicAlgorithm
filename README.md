@@ -1,4 +1,4 @@
-# HHeuristic Algorithm for Multi-objective Permutation Flowshop Scheduling
+# Heuristic Algorithm for Multi-objective Permutation Flowshop Scheduling
 
 ## 📖 問題描述
 定序流線型工廠排程 (Permutation Flowshop Scheduling Problem, PFSP) 是一種特定的流線型工廠排程問題。
